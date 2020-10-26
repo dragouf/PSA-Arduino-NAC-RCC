@@ -2,7 +2,7 @@
 
 PSA NAC / RCC Configuration software
 
-forked of https://github.com/ludwig-v/arduino-psa-nac_rcc_cirocco 
+fork of https://github.com/ludwig-v/arduino-psa-nac_rcc_cirocco 
 
 Thanks to Vlud and Bagou91. 
 
