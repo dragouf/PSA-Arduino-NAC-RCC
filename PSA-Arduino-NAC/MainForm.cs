@@ -22,7 +22,7 @@ namespace PSA_Arduino_NAC
 	{
 		private IContainer components = null;
 
-		private string Version = "1.1.4"; 
+		private string Version = "1.1.5"; 
 
 		// private string AppPath = Application.StartupPath; 
 
@@ -553,6 +553,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonNac.Enabled = false;
 			this.ZoneIndex = 0;
 
+			// Send((">" + "764" + ":" + "664");)
 			Send(this.OpenDiagCode);
 		}
 
@@ -644,9 +645,19 @@ namespace PSA_Arduino_NAC
                                     break;
                                 }
                             }
-                            else
+							else if (calibrationLineData.StartsWith("S3"))
+							{
+								if (this.SentCalLineCount == calibrationLineNumber - 1)
+								{
+									calData = calibrationLineData.Substring(12, calibrationLineData.Length - 12 - 2);
+									calDataHex = unchecked("36" + (this.SentCalLineCount % 256).ToString("X2") + calibrationLineData.Substring(4, 8) + (calData.Length / 2).ToString("X2")) + calData;
+									Send(calDataHex + this.CalibrationHash(calDataHex));
+									break;
+								}
+							}
+							else
                             { // start
-                                if (!calibrationLineData.StartsWith("S8"))
+                                if (!calibrationLineData.StartsWith("S8") && !calibrationLineData.StartsWith("S7"))
                                 {
                                     break;
                                 }
@@ -923,6 +934,7 @@ namespace PSA_Arduino_NAC
 				else if (rcvData.StartsWith("62F0FE")) // calibration received
 				{
 					this.NacCalibration = rcvData.Substring(rcvData.Length - 6);
+
 					Invoke((Action)delegate
 					{
 						this.LabelCalibrationId.Text = "current Calibration: 96" + this.NacCalibration + "80";
@@ -930,6 +942,14 @@ namespace PSA_Arduino_NAC
 
 					this.isCalReceived = true;
 
+					//Read Zone XXXX (2 bytes)
+					Send("22F080");
+				}
+				else if (rcvData.StartsWith("62F080"))
+				{
+					this.NacCalibration = rcvData.Substring(20, 10);
+
+					// Read Zone XXXX (2 bytes)
 					Send("22F18C");
 				}
 				else if (rcvData.StartsWith("61FE")) // calibration received
@@ -1037,7 +1057,7 @@ namespace PSA_Arduino_NAC
 						return;
 					}
 				}
-				else if (rcvData.StartsWith("6E2901"))
+				else if (rcvData.StartsWith("6E2901") || rcvData.StartsWith("7F2E24"))
 				{
 					Invoke((Action)delegate
 					{
