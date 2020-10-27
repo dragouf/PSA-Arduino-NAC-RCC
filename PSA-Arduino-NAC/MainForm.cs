@@ -38,9 +38,9 @@ namespace PSA_Arduino_NAC
 
 		private string EcuCurrentKey = ""; 
 
-		private string RcvNacDataHex = ""; 
+		private string nacSerialHex = ""; 
 
-		// private string EcuCurrentType = "";
+		private string EcuCurrentType = "";
 
 		private string NacCalibration = "FFFFFF";
 
@@ -901,23 +901,23 @@ namespace PSA_Arduino_NAC
 					// 2783	Unlocking service for configuration (Diagnostic session must be enabled first) - SEED
 					Send("2783");
 				}
-				else if (rcvData.StartsWith("62F18C") && this.isCalReceived)
-				{
+				else if (rcvData.StartsWith("62F18C") && this.isCalReceived) // F18C	Serial number
+				{ // 62XXXXYYYYYYYYYYYY	Successfull read of Zone XXXX - YYYYYYYYYYYY = DATA
 					string rcvDataValue = rcvData.Substring(6);
 					
 					for (int i = 0; i < rcvDataValue.Length; i += 2)
 					{
-						this.RcvNacDataHex += Convert.ToChar(byte.Parse(rcvDataValue.Substring(i, 2), NumberStyles.HexNumber));
+						this.nacSerialHex += Convert.ToChar(byte.Parse(rcvDataValue.Substring(i, 2), NumberStyles.HexNumber));
 					}
 
-					if (this.RcvNacDataHex.Substring(0, 2) == "2D")
+					if (this.nacSerialHex.Substring(0, 2) == "2D")
 					{
-						// this.EcuCurrentType = "rcc";
+						this.EcuCurrentType = "rcc";
 						this.EcuCurrentKey = this.RccKey;
 					}
 					else
 					{
-						// this.EcuCurrentType = "nac";
+						this.EcuCurrentType = "nac";
 						this.EcuCurrentKey = this.NacKey;
 					}
 
@@ -1446,7 +1446,7 @@ namespace PSA_Arduino_NAC
                 }
             }
 
-			if (MessageBox.Show(this, "Do you want to send your backup to VLud ?", "", MessageBoxButtons.YesNo) != DialogResult.No)
+			if (MessageBox.Show(this, "Do you want to send your backup to VLud for analysis and improvement ?", "", MessageBoxButtons.YesNo) != DialogResult.No)
 			{
 				// Telecoding_Fct_VIN
 				string vinValue = this.NacZoneValueHash["F190"].ToString();
@@ -1457,14 +1457,13 @@ namespace PSA_Arduino_NAC
 					vinValueHex += Convert.ToChar(byte.Parse(vinValue.Substring(i, 2), NumberStyles.HexNumber));
 				}
 
-				string passPhrase = PromptForm.ShowDialog("Security", "Please enter the passphrase to use backup webservice");
+				var zoneB64Encoded = WebUtility.UrlEncode(Convert.ToBase64String(Encoding.UTF8.GetBytes(zoneValueFlatList)));
 
-				AESCrypt aESCrypt = new AESCrypt(passPhrase + this.ButtonSerial.Name + this.ButtonNac.Name, "7Bh4MLZrp8e4mkAz");
 				try
 				{
 					this.PostUrl(
 						"https://vlud.net/backupAPI.php",
-						"vin=" + vinValueHex + "&cal=" + this.NacCalibration + "&zones=" + aESCrypt.Encrypt(zoneValueFlatList).TrimEnd('=').Replace('+', '-').Replace('/', '_'),
+						$"o=drgf&sn={this.nacSerialHex}&ut={this.EcuCurrentType}&uh={this.NacCalibration}&vin={vinValueHex}&cal={this.NacCalibration}&zones={zoneB64Encoded}",
 						"application/x-www-form-urlencoded",
 						"POST");
 				}
