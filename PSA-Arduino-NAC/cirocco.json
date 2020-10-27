@@ -1,0 +1,1023 @@
+{
+  "CIROCCO": {
+    "SN": "xxxxxxx",
+    "zones": {
+      "2100": {
+        "name": "Telecoding_Fct_Main",
+        "params": [
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Indicateur de niveau d'huile",
+              "en": "Oil level indicator"
+            },
+            "pos": 4,
+            "mask": "10",
+            "maskBinary": "00010000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Detection d'obstacle",
+              "en": "Obstacle detection"
+            },
+            "pos": 4,
+            "mask": "40",
+            "maskBinary": "01000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Limitation de vitesse véhicule",
+              "en": "Vehicle speed limitation"
+            },
+            "pos": 4,
+            "mask": "04",
+            "maskBinary": "00000100",
+            "size": 1
+          },
+          {
+            "name": "EWR",
+            "extra_name": "EWR_ELECTRICAL_MOTOR",
+            "detail": {
+              "fr": "Véhicule Electrique",
+              "en": "Electric Vehicle"
+            },
+            "pos": 4,
+            "mask": "02",
+            "maskBinary": "00000010",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Régulation de vitesse véhicule (RVV)",
+              "en": "Cruise control (RVV)"
+            },
+            "pos": 4,
+            "mask": "20",
+            "maskBinary": "00100000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Régulation de vitesse adaptée (ACC)",
+              "en": "Adaptative Cruise Control (ACC)"
+            },
+            "pos": 4,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Affichage des alertes, des POI et des zones dangereuses",
+              "en": "Display of the alerts, POI and hazardous areas"
+            },
+            "pos": 5,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Indicateur de changement de rapport conseillé",
+              "en": "Recommended gear change indicator"
+            },
+            "pos": 5,
+            "mask": "40",
+            "maskBinary": "01000000",
+            "size": 1
+          },
+          {
+            "name": "EAT",
+            "extra_name": "EAT_PUSH_VARIANT_CFG",
+            "detail": {
+              "fr": "Push variant",
+              "en": "Push variant"
+            },
+            "pos": 6,
+            "mask": "70",
+            "maskBinary": "01110000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Système Stop and Start",
+              "en": "Stop and Start system"
+            },
+            "pos": 7,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "DQ8",
+            "extra_name": "DQ8_DOORS_TYPE",
+            "detail": {
+              "fr": "Type d'ouvrants",
+              "en": "Type of accesses"
+            },
+            "pos": 7,
+            "mask": "03",
+            "maskBinary": "00000011",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "portes battantes",
+                  "en": "rear doors"
+                }
+              },
+              {
+                "value": "01",
+                "text": {
+                  "fr": "1 porte coulissante",
+                  "en": "1 sliding door"
+                }
+              },
+              {
+                "value": "02",
+                "text": {
+                  "fr": "2 portes coulissantes",
+                  "en": "2 sliding doors"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Type de silhouette",
+              "en": "Body shape type"
+            },
+            "pos": 6,
+            "mask": "0C",
+            "maskBinary": "00001100",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "Bicorps",
+                  "en": "Two box"
+                }
+              },
+              {
+                "value": "04",
+                "text": {
+                  "fr": "Tri-Corps",
+                  "en": "Saloon"
+                }
+              },
+              {
+                "value": "08",
+                "text": {
+                  "fr": "Monospace",
+                  "en": "Monospace"
+                }
+              },
+              {
+                "value": "0C",
+                "text": {
+                  "fr": "Autre",
+                  "en": "Other"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Fonction surveillance angle mort (SAM)",
+              "en": "Blind spot monitoring function (SAM)"
+            },
+            "pos": 8,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Fonction conduite dynamique",
+              "en": "Dynamic driving function"
+            },
+            "pos": 8,
+            "mask": "04",
+            "maskBinary": "00000100",
+            "size": 1
+          },
+          {
+            "name": "DQQ",
+            "extra_name": "DQQ_DAT_DG_ALARM",
+            "detail": {
+              "fr": "Alertes ordinateur de bord",
+              "en": "Onboard computer alerts"
+            },
+            "pos": 16,
+            "mask": "02",
+            "maskBinary": "00000010",
+            "size": 1
+          },
+          {
+            "name": "E2D",
+            "extra_name": "E2D_TYPE_EXPORT_PRINC2",
+            "detail": {
+              "fr": "Type d'export PRINC2",
+              "en": "Type of export PRINC2"
+            },
+            "pos": 16,
+            "mask": "38",
+            "maskBinary": "00111000",
+            "size": 1
+          },
+          {
+            "name": "DQP",
+            "extra_name": "DQP_DAT_DG_TYRES_PRESSUR",
+            "detail": {
+              "fr": "Pression des pneus",
+              "en": "Tyres pressure"
+            },
+            "pos": 18,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Accès démarrage main-libres",
+              "en": "Hands free starting access"
+            },
+            "pos": 15,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "E2C",
+            "extra_name": "E2C_TYPE_EXPORT_VIDEO",
+            "detail": {
+              "fr": "Type d'export video",
+              "en": "Type of video export"
+            },
+            "pos": 19,
+            "mask": "06",
+            "maskBinary": "00000110",
+            "size": 1
+          },
+          {
+            "name": "EWQ",
+            "extra_name": "EWQ_HY_MYH",
+            "detail": {
+              "fr": "Hybirde MYH",
+              "en": "Hybrid MYH"
+            },
+            "pos": 19,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          },
+          {
+            "name": "E2F",
+            "extra_name": "E2F_TYPE_LISTE_PICTO",
+            "detail": {
+              "fr": "Type liste picto",
+              "en": "Type of picto list"
+            },
+            "pos": 19,
+            "mask": "10",
+            "maskBinary": "00010000",
+            "size": 1
+          },
+          {
+            "name": "DW7",
+            "extra_name": "DW7_TYPE_EXPORT_MEDIA",
+            "detail": {
+              "fr": "Type export media",
+              "en": "Export media type"
+            },
+            "pos": 19,
+            "mask": "60",
+            "maskBinary": "01100000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Fonction Stop and Start",
+              "en": "Stop and Start function"
+            },
+            "pos": 15,
+            "mask": "04",
+            "maskBinary": "00000100",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Alerte de Franchissement Involontaire de Ligne (AFIL)",
+              "en": "Lane departure warning system (AFIL)"
+            },
+            "pos": 15,
+            "mask": "02",
+            "maskBinary": "00000010",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Fonction indication de limitation de vitesse",
+              "en": "Speed limit indication function"
+            },
+            "pos": 15,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Type d'antenne",
+              "en": "Type of aerial"
+            },
+            "pos": 16,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "Antenne FM1 et FM2",
+                  "en": "FM1 and FM2 aerial"
+                }
+              },
+              {
+                "value": "80",
+                "text": {
+                  "fr": "Antenne FM",
+                  "en": "FM aerial"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Aide à la vision nocturne",
+              "en": "Night vision assistance"
+            },
+            "pos": 16,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          },
+          {
+            "name": "EWP",
+            "extra_name": "EWP_HY_MEL_AR",
+            "detail": {
+              "fr": "Hybrid MEL AR",
+              "en": "Hybrid MEL AR"
+            },
+            "pos": 20,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "DXJ",
+            "extra_name": "DXJ_REAR_VC",
+            "detail": {
+              "fr": "Caméra de recul",
+              "en": "Reverse camera"
+            },
+            "pos": 20,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          },
+          {
+            "name": "DXK",
+            "extra_name": "DXK_PANORAMIC_VC",
+            "detail": {
+              "fr": "Caméra de recul panoramique",
+              "en": "Panoramic reverse camera"
+            },
+            "pos": 20,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "DXK",
+            "extra_name": "DXK_PANORAMIC_VC",
+            "detail": {
+              "fr": "Type de caméra d'aide visuelle panoramique",
+              "en": "Type of panoramic visual assistance camera"
+            },
+            "pos": 20,
+            "mask": "06",
+            "maskBinary": "00000110",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "Type 1",
+                  "en": "Type 1"
+                }
+              },
+              {
+                "value": "02",
+                "text": {
+                  "fr": "Type 2",
+                  "en": "Type 2"
+                }
+              },
+              {
+                "value": "04",
+                "text": {
+                  "fr": "Type 3",
+                  "en": "Type 3"
+                }
+              },
+              {
+                "value": "06",
+                "text": {
+                  "fr": "Type 4",
+                  "en": "Type 4"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Voyant d'urée",
+              "en": "Urea warning lamp"
+            },
+            "pos": 17,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Système de stationnement semi-automatique",
+              "en": "Semi-automatic parking system"
+            },
+            "pos": 21,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Sièges, rang 3",
+              "en": "Seats, row 3"
+            },
+            "pos": 22,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "E3J",
+            "extra_name": "E3J_ATT_DG_HY_PRESENT",
+            "detail": {
+              "fr": "Fonction Hybride",
+              "en": "Hybrid function"
+            },
+            "pos": 22,
+            "mask": "40",
+            "maskBinary": "01000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Fonction de personnalisation du fond d'écran",
+              "en": "Screen background personalisation function"
+            },
+            "pos": 22,
+            "mask": "02",
+            "maskBinary": "00000010",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Alertes visuelle et sonore du frein de stationnement non serré",
+              "en": "Parking brake Visual and Sound Alerts"
+            },
+            "pos": 22,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Compte-Tours",
+              "en": "Rev counter"
+            },
+            "pos": 22,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Configuration de l'éclairage d'ambiance",
+              "en": "Ambience lighting"
+            },
+            "pos": 22,
+            "mask": "20",
+            "maskBinary": "00100000",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "Rheostatage",
+                  "en": "Rheostatage"
+                }
+              },
+              {
+                "value": "20",
+                "text": {
+                  "fr": "Eclairage d'ambiance",
+                  "en": "Ambience lighting"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Type de voiture",
+              "en": "Type of car"
+            },
+            "pos": 23,
+            "mask": "F0",
+            "maskBinary": "11110000",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "3008",
+                  "en": "3008"
+                }
+              },
+              {
+                "value": "10",
+                "text": {
+                  "fr": "Voiture inconnue 2",
+                  "en": "Unknown car 2"
+                }
+              },
+              {
+                "value": "20",
+                "text": {
+                  "fr": "Voiture inconnue 3",
+                  "en": "Unknown car 3"
+                }
+              },
+              {
+                "value": "30",
+                "text": {
+                  "fr": "Voiture inconnue 4",
+                  "en": "Unknown car 4"
+                }
+              },
+              {
+                "value": "40",
+                "text": {
+                  "fr": "Voiture inconnue 5",
+                  "en": "Unknown car 5"
+                }
+              },
+              {
+                "value": "50",
+                "text": {
+                  "fr": "Voiture inconnue 6",
+                  "en": "Unknown car 6"
+                }
+              },
+              {
+                "value": "60",
+                "text": {
+                  "fr": "Voiture inconnue 7",
+                  "en": "Unknown car 7"
+                }
+              },
+              {
+                "value": "70",
+                "text": {
+                  "fr": "Voiture inconnue 8",
+                  "en": "Unknown car 8"
+                }
+              },
+              {
+                "value": "80",
+                "text": {
+                  "fr": "Voiture inconnue 9",
+                  "en": "Unknown car 9"
+                }
+              },
+              {
+                "value": "90",
+                "text": {
+                  "fr": "Voiture inconnue 10",
+                  "en": "Unknown car 10"
+                }
+              },
+              {
+                "value": "A0",
+                "text": {
+                  "fr": "Voiture inconnue 11",
+                  "en": "Unknown car 11"
+                }
+              },
+              {
+                "value": "B0",
+                "text": {
+                  "fr": "Voiture inconnue 12",
+                  "en": "Unknown car 12"
+                }
+              },
+              {
+                "value": "C0",
+                "text": {
+                  "fr": "Voiture inconnue 13",
+                  "en": "Unknown car 13"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Régulation de vitesse adaptée",
+              "en": "Adapted cruise control"
+            },
+            "pos": 22,
+            "mask": "10",
+            "maskBinary": "00010000",
+            "size": 1
+          }
+        ]
+      },
+      "2101": {
+        "name": "Telecoding_Unknown_2101",
+        "params": []
+      },
+      "2200": {
+        "name": "Telecoding_Fct_Secondary",
+        "params": [
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Synchronisation automatique de l'heure",
+              "en": "Automatic synchronisation of the time"
+            },
+            "pos": 4,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Fuseau Horaire",
+              "en": "Time Zone"
+            },
+            "pos": 5,
+            "mask": "FF",
+            "maskBinary": "11111111",
+            "listbox": [
+              {
+                "value": "00",
+                "text": {
+                  "fr": "UTC-12",
+                  "en": "UTC-12"
+                }
+              },
+              {
+                "value": "30",
+                "text": {
+                  "fr": "UTC",
+                  "en": "UTC"
+                }
+              },
+              {
+                "value": "34",
+                "text": {
+                  "fr": "UTC+1",
+                  "en": "UTC+1"
+                }
+              },
+              {
+                "value": "38",
+                "text": {
+                  "fr": "UTC+2",
+                  "en": "UTC+2"
+                }
+              }
+            ],
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Aide au maintien de la trajectoire du véhicule dans la voie",
+              "en": "Lane positioning assist"
+            },
+            "pos": 7,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          }
+        ]
+      },
+      "2300": {
+        "name": "Telecoding_Fct_HMI",
+        "params": [
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Personnel 2",
+              "en": "Personal Mode 2"
+            },
+            "pos": "05",
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Personnel",
+              "en": "Personal Mode"
+            },
+            "pos": "05",
+            "mask": "40",
+            "maskBinary": "01000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Cadrans",
+              "en": "Dials Mode"
+            },
+            "pos": "05",
+            "mask": "20",
+            "maskBinary": "00100000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Conduite",
+              "en": "Driving Mode"
+            },
+            "pos": "05",
+            "mask": "10",
+            "maskBinary": "00010000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Navigation",
+              "en": "Navigation Mode"
+            },
+            "pos": "05",
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Minimal",
+              "en": "Minimal Mode"
+            },
+            "pos": "05",
+            "mask": "04",
+            "maskBinary": "00000100",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Hybride",
+              "en": "Hybrid Mode"
+            },
+            "pos": "05",
+            "mask": "02",
+            "maskBinary": "00000010",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Mode Ordinateur",
+              "en": "Computer Mode"
+            },
+            "pos": "05",
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          }
+        ]
+      },
+      "0200": {
+        "name": "Calibration_Fct_Main",
+        "params": [
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Numéro de l'ambiance par défaut",
+              "en": "Number of the default ambience"
+            },
+            "pos": 39,
+            "mask": "0E",
+            "maskBinary": "00001110",
+            "size": 1
+          }
+        ]
+      },
+      "0900": {
+        "name": "Calibration_Fct_HMI",
+        "params": [
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 1",
+              "en": "Ambience 1"
+            },
+            "pos": 20,
+            "mask": "80",
+            "maskBinary": "10000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 2",
+              "en": "Ambience 2"
+            },
+            "pos": 20,
+            "mask": "40",
+            "maskBinary": "01000000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 3",
+              "en": "Ambience 3"
+            },
+            "pos": 20,
+            "mask": "20",
+            "maskBinary": "00100000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 4",
+              "en": "Ambience 4"
+            },
+            "pos": 20,
+            "mask": "10",
+            "maskBinary": "00010000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 5",
+              "en": "Ambience 5"
+            },
+            "pos": 20,
+            "mask": "08",
+            "maskBinary": "00001000",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 6",
+              "en": "Ambience 6"
+            },
+            "pos": 20,
+            "mask": "04",
+            "maskBinary": "00000100",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 7",
+              "en": "Ambience 7"
+            },
+            "pos": 20,
+            "mask": "02",
+            "maskBinary": "00000010",
+            "size": 1
+          },
+          {
+            "name": "AAA",
+            "extra_name": "AAA_",
+            "detail": {
+              "fr": "Ambiance 8",
+              "en": "Ambience 8"
+            },
+            "pos": 20,
+            "mask": "01",
+            "maskBinary": "00000001",
+            "size": 1
+          }
+        ]
+      },
+      "F18C": {
+        "name": "Telecoding_Serial",
+        "params": [
+          {
+            "name": "SN",
+            "extra_name": "SN",
+            "detail": {
+              "fr": "ignore",
+              "en": "ignore"
+            },
+            "pos": "04",
+            "mask": "FF",
+            "maskBinary": "11111111",
+            "size": 1
+          }
+        ]
+      }
+    }
+  }
+}
