@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
@@ -13,9 +14,9 @@ namespace PSA_Arduino_NAC
 {
 	public class ParamsForm : Form
 	{
-		private Hashtable _UserKeyValueHash = new Hashtable(); 
+		private Hashtable _UserZoneValueHash = new Hashtable(); 
 
-		private Hashtable DefaultKeyValueHash;
+		private Hashtable NacZoneValueHash;
 
 		private string LanguageCode = "fr";
 
@@ -55,7 +56,7 @@ namespace PSA_Arduino_NAC
 
 		public Hashtable UserKeyValueHash()
 		{
-			return this._UserKeyValueHash;
+			return this._UserZoneValueHash;
 		}
 
 		public ParamsForm()
@@ -67,46 +68,57 @@ namespace PSA_Arduino_NAC
 			}
 		}
 
-		private void OnFormLoad(object P_0, EventArgs P_1)
+		private void OnFormLoad(object sender, EventArgs args)
 		{
 		}
 
-		public void InitForm(ref Hashtable defaultKeyValueHash, ref JObject P_1)
+		public void InitForm(ref Hashtable nacZoneValueHash, ref JObject jsonObject)
 		{
-			this.DefaultKeyValueHash = defaultKeyValueHash;
+			this.NacZoneValueHash = nacZoneValueHash;
+
 			checked
 			{
-				if (defaultKeyValueHash.ContainsKey("F190") && defaultKeyValueHash.ContainsKey("F18C") && defaultKeyValueHash.ContainsKey("0106"))
+				// F190	VIN
+				// F18C	Serial number
+				// 0106	Calibration_Fct_BT
+				if (nacZoneValueHash.ContainsKey("F190") && nacZoneValueHash.ContainsKey("F18C") && nacZoneValueHash.ContainsKey("0106"))
 				{
-					string text = defaultKeyValueHash["F190"].ToString();
-					if (text != "" && text != "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+					// VIN
+					string zoneNacValue = nacZoneValueHash["F190"].ToString();
+					
+					if (zoneNacValue != "" && zoneNacValue != "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 					{
-						for (int i = 0; i < text.Length; i += 2)
+						for (int i = 0; i < zoneNacValue.Length; i += 2)
 						{
-							this.TextBoxVin.Text += Convert.ToChar(byte.Parse(text.Substring(i, 2), NumberStyles.HexNumber));
+							this.TextBoxVin.Text += Convert.ToChar(byte.Parse(zoneNacValue.Substring(i, 2), NumberStyles.HexNumber));
 						}
-						this.TextBoxVin.Tag = text;
+						this.TextBoxVin.Tag = zoneNacValue;
 					}
 					else
 					{
 						this.TextBoxVin.Text = "?????????????????";
 						this.TextBoxVin.Tag = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
 					}
+
+					// Bluetooth
 					Label label = this.LabelBtName;
 					bool visible = (this.TextBoxBtName.Visible = true);
 					label.Visible = visible;
-					this.TextBoxBtName.Tag = defaultKeyValueHash["0106"].ToString();
-					text = defaultKeyValueHash["0106"].ToString().Replace("00", "");
-					for (int i = 0; i < text.Length; i += 2)
+					this.TextBoxBtName.Tag = nacZoneValueHash["0106"].ToString();
+					zoneNacValue = nacZoneValueHash["0106"].ToString().Replace("00", "");
+					
+					for (int i = 0; i < zoneNacValue.Length; i += 2)
 					{
-						this.TextBoxBtName.Text += Convert.ToChar(byte.Parse(text.Substring(i, 2), NumberStyles.HexNumber));
+						this.TextBoxBtName.Text += Convert.ToChar(byte.Parse(zoneNacValue.Substring(i, 2), NumberStyles.HexNumber));
 					}
-					text = defaultKeyValueHash["F18C"].ToString();
-					if (text != null)
+
+					// SN
+					zoneNacValue = nacZoneValueHash["F18C"].ToString();
+					if (zoneNacValue != null)
 					{
-						for (int i = 0; i < text.Length; i += 2)
+						for (int i = 0; i < zoneNacValue.Length; i += 2)
 						{
-							this.TextBoxSN.Text += Convert.ToChar(byte.Parse(text.Substring(i, 2), NumberStyles.HexNumber));
+							this.TextBoxSN.Text += Convert.ToChar(byte.Parse(zoneNacValue.Substring(i, 2), NumberStyles.HexNumber));
 						}
 						this.TextBoxSN.Tag = this.TextBoxSN.Text;
 					}
@@ -114,232 +126,306 @@ namespace PSA_Arduino_NAC
 					{
 						this.TextBoxSN.Tag = "";
 					}
-					int num = 16;
-					int num2 = 21;
+
+					int labelXPosStart = 16;
+					int labelYPosStart = 21;
+
 					Regex regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
-					int num3 = 0;
-					ArrayList arrayList = new ArrayList();
-					foreach (JProperty item in P_1.Root["NAC"]["zones"].Children())
+					int paramIndex = 0;
+
+					List<string> zonesFlatten = new List<string>();
+
+					foreach (JProperty jsonZone in jsonObject.Root["NAC"]["zones"].Children())
 					{
-						string name = item.Name;
-						if (item.Name.Contains("0106") || item.Name.Contains("F190") || item.Name.Contains("F18C") || !this.DefaultKeyValueHash.ContainsKey(name))
+						string zoneNodeCode = jsonZone.Name;
+						if (jsonZone.Name.Contains("0106") || jsonZone.Name.Contains("F190") || jsonZone.Name.Contains("F18C") || !this.NacZoneValueHash.ContainsKey(zoneNodeCode))
 						{
 							continue;
 						}
-						arrayList.Add(name + ": " + item.Value["name"].ToString() + "\n");
-						TabPage tabPage = new TabPage(name);
-						tabPage.AutoScroll = true;
-						tabPage.BackColor = SystemColors.Control;
-						tabPage.Padding = new Padding(3);
-						tabPage.TabIndex = 0;
-						tabPage.Name = item.Name;
-						int num4 = num2;
-						num3 = 0;
-						Label label2 = new Label();
-						label2.Location = new Point(num, num4 + num3 * 30);
-						label2.Name = item.Value["name"].ToString();
-						label2.Text = name + ": " + item.Value["name"].ToString();
-						label2.Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0);
-						label2.Size = new Size(350, 25);
-						label2.TabIndex = 4;
-						tabPage.Controls.Add(label2);
-						num4 += 30;
-						foreach (JObject item2 in item.Value["params"].Children())
+
+						zonesFlatten.Add(zoneNodeCode + ": " + jsonZone.Value["name"].ToString() + "\n");
+
+                        TabPage tabPage = new TabPage(zoneNodeCode)
+                        {
+                            AutoScroll = true,
+                            BackColor = SystemColors.Control,
+                            Padding = new Padding(3),
+                            TabIndex = 0,
+                            Name = jsonZone.Name
+                        };
+
+                        int currentYPos = labelYPosStart;
+						paramIndex = 0;
+
+                        Label labelZoneCode = new Label
+                        {
+                            Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
+                            Name = jsonZone.Value["name"].ToString(),
+                            Text = zoneNodeCode + ": " + jsonZone.Value["name"].ToString(),
+                            Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0),
+                            Size = new Size(350, 25),
+                            TabIndex = 4
+                        };
+
+                        tabPage.Controls.Add(labelZoneCode);
+
+						currentYPos += 30;
+
+						foreach (JObject zoneParams in jsonZone.Value["params"].Children())
 						{
-							Label label3 = new Label();
-							label3.Location = new Point(num, num4 + num3 * 30);
-							label3.Name = item2["extra_name"].ToString();
-							label3.Text = item2["name"].ToString() + ": " + item2["extra_name"].ToString();
-							if (((JObject)item2["detail"])[this.LanguageCode].ToString() != "")
+                            Label labelExtraName = new Label
+                            {
+                                Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
+                                Name = zoneParams["extra_name"].ToString(),
+                                Text = zoneParams["name"].ToString() + ": " + zoneParams["extra_name"].ToString(),
+								Size = new Size(310, 32),
+								TabIndex = 4
+							};
+
+                            if (((JObject)zoneParams["detail"])[this.LanguageCode].ToString() != "")
 							{
-								label3.Text = ((JObject)item2["detail"])[this.LanguageCode].ToString();
+								labelExtraName.Text = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString();
 							}
-							label3.Size = new Size(310, 32);
-							label3.TabIndex = 4;
-							tabPage.Controls.Add(label3);
-							int num5 = 0;
-							if (item2["listbox"] != null)
+
+							tabPage.Controls.Add(labelExtraName);
+
+							int zoneNacDataValue = 0;
+							// listbox param
+							if (zoneParams["listbox"] != null)
 							{
-								ComboBox comboBox = new ComboBox();
-								comboBox.BackColor = Color.White;
-								comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-								comboBox.FormattingEnabled = true;
-								comboBox.Location = new Point(num + 315, num4 + num3 * 30 - 5);
-								comboBox.Name = "comboBox1";
-								comboBox.Size = new Size(400, 21);
-								comboBox.TabIndex = 8;
-								tabPage.Controls.Add(comboBox);
-								if (defaultKeyValueHash.ContainsKey(name))
+                                ComboBox comboBox = new ComboBox
+                                {
+                                    BackColor = Color.White,
+                                    DropDownStyle = ComboBoxStyle.DropDownList,
+                                    FormattingEnabled = true,
+                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30 - 5),
+                                    Name = "comboBox1",
+                                    Size = new Size(400, 21),
+                                    TabIndex = 8
+                                };
+
+                                tabPage.Controls.Add(comboBox);
+
+								if (nacZoneValueHash.ContainsKey(zoneNodeCode))
 								{
-									text = defaultKeyValueHash[name].ToString();
-									if (text != "")
+									zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+									if (zoneNacValue != "")
 									{
-										int num6 = int.Parse(item2["pos"].ToString()) - 4;
-										if (text.Length < 20 && name == "2108" && regex.Match(item2["name"].ToString()).Success)
+										int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+										
+										// 2108	Telecoding_Fct_BTEL
+										if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
 										{
-											num6--;
+											paramPos--;
 										}
-										num5 = byte.Parse(text.Substring(num6 * 2, 2), NumberStyles.HexNumber);
-										byte b = byte.Parse(item2["mask"].ToString(), NumberStyles.HexNumber);
-										num5 &= b;
+
+										zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+										byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
+										zoneNacDataValue &= paramMask;
 									}
 								}
-								foreach (JObject item3 in item2["listbox"].Children())
+
+								foreach (JObject paramListJson in zoneParams["listbox"].Children())
 								{
-									comboBox.Items.Add(((JObject)item3["text"])[this.LanguageCode].ToString());
-									if (item3["value"].ToString() == num5.ToString("X2"))
+									comboBox.Items.Add(((JObject)paramListJson["text"])[this.LanguageCode].ToString());
+									if (paramListJson["value"].ToString() == zoneNacDataValue.ToString("X2"))
 									{
 										comboBox.SelectedIndex = comboBox.Items.Count - 1;
 									}
 								}
-								JObject jObject3 = (JObject)item2.DeepClone();
-								jObject3.Add(new JProperty("zone", name));
+
+								JObject jsonParamsClone = (JObject)zoneParams.DeepClone();
+								jsonParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
 								if (comboBox.SelectedIndex == -1)
 								{
-									comboBox.Items.Add("Unknown 0x" + num5.ToString("X2"));
+									comboBox.Items.Add("Unknown 0x" + zoneNacDataValue.ToString("X2"));
 									comboBox.SelectedIndex = comboBox.Items.Count - 1;
-									jObject3.Add(new JProperty("unknown", num5.ToString("X2")));
+									jsonParamsClone.Add(new JProperty("unknown", zoneNacDataValue.ToString("X2")));
 								}
-								comboBox.Tag = jObject3;
+
+								comboBox.Tag = jsonParamsClone;
 							}
-							else if (item2["mask"].ToString() == "FF")
+							// textbox
+							else if (zoneParams["mask"].ToString() == "FF")
 							{
-								string text2 = "??";
-								string text3 = "";
-								if (defaultKeyValueHash.ContainsKey(name))
+								string zoneValueReadable = "??";
+								string paramUnit = "";
+
+								if (nacZoneValueHash.ContainsKey(zoneNodeCode))
 								{
-									text = defaultKeyValueHash[name].ToString();
-									if (text != "")
+									zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+									if (zoneNacValue != "")
 									{
-										int num6 = int.Parse(item2["pos"].ToString()) - 4;
-										int length = int.Parse(item2["size"].ToString()) * 2;
-										if (text.Length < 20 && name == "2108" && regex.Match(item2["name"].ToString()).Success)
+										int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+										int length = int.Parse(zoneParams["size"].ToString()) * 2;
+										
+										if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
 										{
-											num6--;
+											paramPos--;
 										}
-										num5 = int.Parse(text.Substring(num6 * 2, length), NumberStyles.HexNumber);
-										text2 = ((!(item2["name"].ToString() == "DSZ")) ? Convert.ToInt32(num5).ToString() : (3.0 + (double)(num5 - 86) * 0.5).ToString("#.#"));
-										if (item2["unit"] != null)
+
+										zoneNacDataValue = int.Parse(zoneNacValue.Substring(paramPos * 2, length), NumberStyles.HexNumber);
+										zoneValueReadable = ((!(zoneParams["name"].ToString() == "DSZ")) ? Convert.ToInt32(zoneNacDataValue).ToString() : (3.0 + (double)(zoneNacDataValue - 86) * 0.5).ToString("#.#"));
+										if (zoneParams["unit"] != null)
 										{
-											text3 = item2["unit"].ToString();
+											paramUnit = zoneParams["unit"].ToString();
 										}
 									}
 								}
-								TextBox textBox = new TextBox();
-								textBox.Location = new Point(num + 315, num4 + num3 * 30);
-								textBox.Name = "valeur";
-								textBox.Text = text2;
-								textBox.Size = new Size(30, 23);
-								textBox.TabIndex = 4;
-								JObject jObject3 = (JObject)item2.DeepClone();
-								jObject3.Add(new JProperty("zone", name));
-								textBox.Tag = jObject3;
-								tabPage.Controls.Add(textBox);
-								Label label4 = new Label();
-								label4.Location = new Point(num + 355, num4 + num3 * 30);
-								label4.Name = "unit";
-								label4.Text = text3;
-								label4.Size = new Size(300, 23);
-								label4.TabIndex = 4;
-								tabPage.Controls.Add(label4);
+
+                                TextBox textboxParamValue = new TextBox
+                                {
+                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30),
+                                    Name = "valeur",
+                                    Text = zoneValueReadable,
+                                    Size = new Size(30, 23),
+                                    TabIndex = 4
+                                };
+
+                                JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
+								zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+								textboxParamValue.Tag = zoneParamsClone;
+
+								tabPage.Controls.Add(textboxParamValue);
+
+                                Label labelParamUnit = new Label
+                                {
+                                    Location = new Point(labelXPosStart + 355, currentYPos + paramIndex * 30),
+                                    Name = "unit",
+                                    Text = paramUnit,
+                                    Size = new Size(300, 23),
+                                    TabIndex = 4
+                                };
+
+                                tabPage.Controls.Add(labelParamUnit);
 							}
-							else if (item2["maskBinary"].ToString().Contains("11"))
+							// textbox
+							else if (zoneParams["maskBinary"].ToString().Contains("11"))
 							{
-								text = defaultKeyValueHash[name].ToString();
-								int num6 = int.Parse(item2["pos"].ToString()) - 4;
-								if (text.Length < 20 && name == "2108" && regex.Match(item2["name"].ToString()).Success)
+								zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+								int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+								
+								if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
 								{
-									num6--;
+									paramPos--;
 								}
-								num5 = byte.Parse(text.Substring(num6 * 2, 2), NumberStyles.HexNumber);
-								byte b = byte.Parse(item2["mask"].ToString(), NumberStyles.HexNumber);
-								num5 &= b;
-								num6 = item2["maskBinary"].ToString().LastIndexOf('1');
-								num6 = 8 - num6 - 1;
-								num5 = (byte)(num5 >> num6);
-								TextBox textBox = new TextBox();
-								textBox.Location = new Point(num + 315, num4 + num3 * 30);
-								textBox.Name = ((JObject)item2["detail"])[this.LanguageCode].ToString();
-								textBox.Text = Convert.ToInt32(num5).ToString();
-								textBox.Size = new Size(30, 23);
-								textBox.TabIndex = 4;
-								JObject jObject3 = (JObject)item2.DeepClone();
-								jObject3.Add(new JProperty("zone", name));
-								textBox.Tag = jObject3;
+
+								zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+								byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
+								zoneNacDataValue &= paramMask;
+								paramPos = zoneParams["maskBinary"].ToString().LastIndexOf('1');
+								paramPos = 8 - paramPos - 1;
+								zoneNacDataValue = (byte)(zoneNacDataValue >> paramPos);
+
+                                TextBox textBox = new TextBox
+                                {
+                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30),
+                                    Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
+                                    Text = Convert.ToInt32(zoneNacDataValue).ToString(),
+                                    Size = new Size(30, 23),
+                                    TabIndex = 4
+                                };
+
+                                JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
+								zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+								textBox.Tag = zoneParamsClone;
 								tabPage.Controls.Add(textBox);
 							}
+							// checkbox
 							else
-							{
-								text = defaultKeyValueHash[name].ToString();
-								int num6 = int.Parse(item2["pos"].ToString()) - 4;
-								if (text.Length < 20 && name == "2108" && regex.Match(item2["name"].ToString()).Success)
+							{ 
+								zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+								int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+
+								if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
 								{
-									num6--;
+									paramPos--;
 								}
-								if (num6 * 2 < text.Length)
+
+								if (paramPos * 2 < zoneNacValue.Length)
 								{
-									JObject jObject3 = (JObject)item2.DeepClone();
-									jObject3.Add(new JProperty("zone", name));
-									
-									CheckBox checkBox = new CheckBox();
-									checkBox.Location = new Point(num + 315, num4 + num3 * 30 - 5);
-									checkBox.Name = item2["name"].ToString();
-									checkBox.Tag = jObject3;
-									checkBox.Text = "Disabled";
-									checkBox.CheckedChanged += OnCheckboxChanged;
-									checkBox.Size = new Size(95, 24);
-									checkBox.TabIndex = 5;
-									checkBox.UseVisualStyleBackColor = true;
+									JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
+									zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+                                    CheckBox checkBox = new CheckBox
+                                    {
+                                        Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30 - 5),
+                                        Name = zoneParams["name"].ToString(),
+                                        Tag = zoneParamsClone,
+                                        Text = "Disabled",
+										Size = new Size(95, 24),
+										TabIndex = 5,
+										UseVisualStyleBackColor = true,
+									};
+                                    checkBox.CheckedChanged += OnCheckboxChanged;
+		
 
 									tabPage.Controls.Add(checkBox);
-									if (defaultKeyValueHash.ContainsKey(name) && text != "")
+
+									if (nacZoneValueHash.ContainsKey(zoneNodeCode) && zoneNacValue != "")
 									{
-										num5 = byte.Parse(text.Substring(num6 * 2, 2), NumberStyles.HexNumber);
-										byte b = byte.Parse(item2["mask"].ToString(), NumberStyles.HexNumber);
-										if ((num5 & b) == b)
+										zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+										byte zoneMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
+										if ((zoneNacDataValue & zoneMask) == zoneMask)
 										{
 											checkBox.Checked = true;
 										}
 									}
-									Label label5 = new Label();
-									label5.Location = new Point(num + 410, num4 + num3 * 30);
-									label5.Name = ((JObject)item2["detail"])[this.LanguageCode].ToString();
-									label5.Text = "";
-									label5.Size = new Size(400, 23);
-									label5.TabIndex = 4;
-									tabPage.Controls.Add(label5);
+
+                                    Label labelParamDescription = new Label
+                                    {
+                                        Location = new Point(labelXPosStart + 410, currentYPos + paramIndex * 30),
+                                        Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
+                                        Text = "",
+                                        Size = new Size(400, 23),
+                                        TabIndex = 4
+                                    };
+
+                                    tabPage.Controls.Add(labelParamDescription);
 								}
+								// Unsupported by unit / not editable
 								else
 								{
-									Label label5 = new Label();
-									label5.Location = new Point(num + 410, num4 + num3 * 30);
-									label5.Name = ((JObject)item2["detail"])[this.LanguageCode].ToString();
-									label5.Text = "Unsupported by your unit";
-									label5.Size = new Size(400, 23);
-									label5.TabIndex = 4;
-									tabPage.Controls.Add(label5);
+                                    Label labelParamDescription = new Label
+                                    {
+                                        Location = new Point(labelXPosStart + 410, currentYPos + paramIndex * 30),
+                                        Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
+                                        Text = "Unsupported by your unit",
+                                        Size = new Size(400, 23),
+                                        TabIndex = 4
+                                    };
+
+                                    tabPage.Controls.Add(labelParamDescription);
 								}
 							}
-							Label label6 = new Label();
-							label6.Location = new Point(num + 815, num4 + num3 * 30);
-							label6.Name = "valhexa";
-							label6.Text = num5.ToString("X2");
-							label6.Size = new Size(50, 32);
-							label6.TabIndex = 4;
-							tabPage.Controls.Add(label6);
-							num3++;
+
+                            Label labelZoneHexValue = new Label
+                            {
+                                Location = new Point(labelXPosStart + 815, currentYPos + paramIndex * 30),
+                                Name = "valhexa",
+                                Text = zoneNacDataValue.ToString("X2"),
+                                Size = new Size(50, 32),
+                                TabIndex = 4
+                            };
+
+                            tabPage.Controls.Add(labelZoneHexValue);
+							paramIndex++;
 						}
 						this.TabControl1.TabPages.Add(tabPage);
 					}
-					for (int i = 0; i < arrayList.Count; i++)
+
+					for (int i = 0; i < zonesFlatten.Count; i++)
 					{
-						if (i < unchecked(arrayList.Count / 2))
+						if (i < unchecked(zonesFlatten.Count / 2))
 						{
-							Label2.Text += arrayList[i].ToString();
+							Label2.Text += zonesFlatten[i].ToString();
 						}
 						else
 						{
-							Label1.Text += arrayList[i].ToString();
+							Label1.Text += zonesFlatten[i].ToString();
 						}
 					}
 				}
@@ -347,10 +433,13 @@ namespace PSA_Arduino_NAC
 				{
 					MessageBox.Show(this, "Missing zones, please make a new reading - Disconnect PSA Diag interface if plugged", "Error");
 				}
+
+				// Reload all buffers
 				foreach (Control control2 in this.SplitContainer1.Panel1.Controls)
 				{
 					ReloadBuffer(control2);
 				}
+
 				foreach (Control control3 in this.SplitContainer1.Panel2.Controls)
 				{
 					ReloadBuffer(control3);
@@ -360,267 +449,311 @@ namespace PSA_Arduino_NAC
 			}
 		}
 
-		private void OnCheckboxChanged(object P_0, EventArgs P_1)
+		private void OnCheckboxChanged(object sender, EventArgs args)
 		{
-			if (((CheckBox)P_0).Checked)
+			if (((CheckBox)sender).Checked)
 			{
-				((CheckBox)P_0).Text = "Enabled";
+				((CheckBox)sender).Text = "Enabled";
 			}
 			else
 			{
-				((CheckBox)P_0).Text = "Disabled";
+				((CheckBox)sender).Text = "Disabled";
 			}
 		}
 
-		private void OnButtonSaveClick(object P_0, EventArgs P_1)
+		private void OnButtonSaveClick(object sender, EventArgs args)
 		{
 			Regex regex = new Regex("^[0-9A-Z?]*$");
+
 			if (this.TextBoxVin.Text.Length != 17 || !regex.Match(this.TextBoxVin.Text).Success)
 			{
 				MessageBox.Show(this, "VIN incorrect !", "Error");
 				return;
 			}
+
 			regex = new Regex("^[0-9A-Za-z\\-_]*$");
+
 			if (this.TextBoxBtName.Visible && (this.TextBoxBtName.Text.Length > 30 || this.TextBoxBtName.Text.Length == 0 || !regex.Match(this.TextBoxBtName.Text).Success))
 			{
 				MessageBox.Show(this, "Bluetooth Name incorrect !", "Error");
 				return;
 			}
+
 			regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
 			checked
 			{
-				foreach (TabPage tabPage2 in this.TabControl1.TabPages)
+				// GET textboxes value
+				foreach (TabPage tabPage in this.TabControl1.TabPages)
 				{
-					foreach (Control control2 in tabPage2.Controls)
+					foreach (Control tabControl in tabPage.Controls)
 					{
-						if (!control2.GetType().ToString().Contains("TextBox") || control2.Tag.GetType().ToString().Contains("String"))
+						if (!tabControl.GetType().ToString().Contains("TextBox") || tabControl.Tag.GetType().ToString().Contains("String"))
 						{
 							continue;
 						}
-						if (((TextBox)control2).Text.Contains("?"))
+
+						if (((TextBox)tabControl).Text.Contains("?"))
 						{
-							((TextBox)control2).Text = "0";
+							((TextBox)tabControl).Text = "0";
 						}
-						JObject jObject = (JObject)((TextBox)control2).Tag;
-						string text = jObject["zone"].ToString();
-						string text2 = jObject["name"].ToString() + ": " + jObject["extra_name"].ToString();
+
+						JObject jObject = (JObject)((TextBox)tabControl).Tag;
+						string zoneCode = jObject["zone"].ToString();
+						string zoneDescription = jObject["name"].ToString() + ": " + jObject["extra_name"].ToString();
+						
 						if (((JObject)jObject["detail"])[this.LanguageCode].ToString() != "")
 						{
-							text2 = ((JObject)jObject["detail"])[this.LanguageCode].ToString();
+							zoneDescription = ((JObject)jObject["detail"])[this.LanguageCode].ToString();
 						}
-						int num = 0;
-						byte b = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
-						int num2 = jObject["maskBinary"].ToString().LastIndexOf('1');
-						num2 = 8 - num2 - 1;
-						byte b2 = (byte)(b >> num2);
-						int num3 = int.Parse(jObject["size"].ToString());
+
+						int zoneValue = 0;
+						byte paramMask = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
+						int paramMaskBinaryLsbIndex = jObject["maskBinary"].ToString().LastIndexOf('1');
+						paramMaskBinaryLsbIndex = 8 - paramMaskBinaryLsbIndex - 1;
+						byte maxDigit = (byte)(paramMask >> paramMaskBinaryLsbIndex);
+						int paramSize = int.Parse(jObject["size"].ToString());
+						
 						try
 						{
 							if (jObject["name"].ToString() == "DSZ")
 							{
-								int value = (int)((double.Parse(((TextBox)control2).Text.Replace(".", ",")) - 3.0) * 2.0);
-								num = Convert.ToByte(value);
-								num += 86;
+								int value = (int)((double.Parse(((TextBox)tabControl).Text.Replace(".", ",")) - 3.0) * 2.0);
+								zoneValue = Convert.ToByte(value);
+								zoneValue += 86;
 							}
 							else
 							{
-								int value2 = int.Parse(((TextBox)control2).Text);
-								num = Convert.ToInt16(value2);
+								int value2 = int.Parse(((TextBox)tabControl).Text);
+								zoneValue = Convert.ToInt16(value2);
 							}
+
+							double paramMaxValue = Math.Pow((int)maxDigit, paramSize);
+
 							unchecked
 							{
-								if ((double)num > Math.Pow((int)b2, num3))
+								if ((double)zoneValue > paramMaxValue)
 								{
-									MessageBox.Show(this, "Value greater than maximum value " + Convert.ToInt32(Math.Pow((int)b2, num3)) + " in " + text + ": " + text2, "Error");
+									MessageBox.Show(this, "Value greater than maximum value " + Convert.ToInt32(paramMaxValue) + " in " + zoneCode + ": " + zoneDescription, "Error");
 									return;
 								}
 							}
 						}
 						catch
 						{
-							MessageBox.Show(this, "Incorrect value in " + text + ": " + text2, "Error");
+							MessageBox.Show(this, "Incorrect value in " + zoneCode + ": " + zoneDescription, "Error");
 							return;
 						}
 					}
 				}
-				string text3 = "Parameters's zones are modified:\r\n";
-				var clonedDefaultHashtable = (Hashtable)this.DefaultKeyValueHash.Clone();
-				string text4 = "";
-				char[] array = this.TextBoxVin.Text.ToCharArray();
-				for (int i = 0; i < array.Length; i++)
+
+				string paramsEditedList = "Parameters's zones are modified:\r\n";
+				var clonedDefaultHashtable = (Hashtable)this.NacZoneValueHash.Clone();
+				string zoneValueHex = "";
+				char[] zoneValueChars = this.TextBoxVin.Text.ToCharArray();
+
+				for (int index = 0; index < zoneValueChars.Length; index++)
 				{
-					text4 = ((array[i] != '?') ? (text4 + Convert.ToByte(array[i]).ToString("x2")) : (text4 + "FF"));
+					zoneValueHex += (zoneValueChars[index] != '?') ? Convert.ToByte(zoneValueChars[index]).ToString("x2") : "FF";
 				}
-				clonedDefaultHashtable["F190"] = text4.ToUpper();
+
+				clonedDefaultHashtable["F190"] = zoneValueHex.ToUpper();
+				
 				if (this.TextBoxVin.Tag.ToString() != clonedDefaultHashtable["F190"].ToString())
 				{
-					text3 += "F190: VIN\r\n";
+					paramsEditedList += "F190: VIN\r\n";
 				}
+
 				if (this.TextBoxBtName.Visible)
 				{
-					text4 = "";
-					array = this.TextBoxBtName.Text.ToCharArray();
-					for (int i = 0; i < array.Length; i++)
+					zoneValueHex = "";
+					zoneValueChars = this.TextBoxBtName.Text.ToCharArray();
+					
+					for (int i = 0; i < zoneValueChars.Length; i++)
 					{
-						text4 += Convert.ToByte(array[i]).ToString("x2");
+						zoneValueHex += Convert.ToByte(zoneValueChars[i]).ToString("x2");
 					}
-					int num4 = 60 - text4.Length;
-					for (int i = 0; i < num4; i++)
+
+					int hexValuePadLeft = 60 - zoneValueHex.Length;
+					for (int index = 0; index < hexValuePadLeft; index++)
 					{
-						text4 += "0";
+						zoneValueHex += "0";
 					}
-					clonedDefaultHashtable["0106"] = text4.ToUpper();
+
+					clonedDefaultHashtable["0106"] = zoneValueHex.ToUpper();
+
 					if (this.TextBoxBtName.Tag.ToString() != clonedDefaultHashtable["0106"].ToString())
 					{
-						text3 += "0106: Bluetooth Name\r\n";
+						paramsEditedList += "0106: Bluetooth Name\r\n";
 					}
 				}
-				foreach (TabPage tabPage3 in this.TabControl1.TabPages)
+
+				// GET Checkboxes/Combos value
+				foreach (TabPage tabPage in this.TabControl1.TabPages)
 				{
-					foreach (Control control3 in tabPage3.Controls)
+					foreach (Control tabControl in tabPage.Controls)
 					{
 						JObject jObject;
-						byte b;
-						string text;
-						int num2;
-						if (control3.GetType().ToString().Contains("CheckBox"))
+						byte paramMask;
+						string zoneCode;
+						int paramPos;
+						if (tabControl.GetType().ToString().Contains("CheckBox"))
 						{
-							jObject = (JObject)((CheckBox)control3).Tag;
-							string text2 = jObject["name"].ToString() + ": " + jObject["extra_name"].ToString();
-							text = jObject["zone"].ToString();
-							b = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
-							num2 = int.Parse(jObject["pos"].ToString()) - 4;
-							if (clonedDefaultHashtable[text].ToString().Length < 20 && text == "2108" && regex.Match(text2).Success)
+							jObject = (JObject)((CheckBox)tabControl).Tag;
+							string zoneDescription = jObject["name"].ToString() + ": " + jObject["extra_name"].ToString();
+							zoneCode = jObject["zone"].ToString();
+							paramMask = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
+							paramPos = int.Parse(jObject["pos"].ToString()) - 4;
+
+							if (clonedDefaultHashtable[zoneCode].ToString().Length < 20 && zoneCode == "2108" && regex.Match(zoneDescription).Success)
 							{
-								num2--;
+								paramPos--;
 							}
-							if (clonedDefaultHashtable.ContainsKey(text))
+
+							if (clonedDefaultHashtable.ContainsKey(zoneCode))
 							{
-								byte b3 = 0;
+								byte zoneDataValueUser = 0;
 								try
 								{
-									b3 = byte.Parse(clonedDefaultHashtable[text].ToString().Substring(num2 * 2, 2), NumberStyles.HexNumber);
-									byte b4 = b3;
-									b3 = ((!((CheckBox)control3).Checked) ? ((byte)(b3 & ~b)) : ((byte)(b3 | b)));
-									if (b4 != b3)
+									zoneDataValueUser = byte.Parse(clonedDefaultHashtable[zoneCode].ToString().Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+									byte nacZoneDataValue = zoneDataValueUser;
+									zoneDataValueUser = ((!((CheckBox)tabControl).Checked) ? ((byte)(zoneDataValueUser & ~paramMask)) : ((byte)(zoneDataValueUser | paramMask)));
+									if (nacZoneDataValue != zoneDataValueUser)
 									{
-										string text5 = text3;
-										text3 = text5 + text + ": " + ((JObject)jObject["detail"])[this.LanguageCode].ToString() + "\n";
+										paramsEditedList += zoneCode + ": " + ((JObject)jObject["detail"])[this.LanguageCode].ToString() + "\n";
 									}
-									clonedDefaultHashtable[text] = clonedDefaultHashtable[text].ToString().Substring(0, num2 * 2) + b3.ToString("x2").ToUpper() + clonedDefaultHashtable[text].ToString().Substring(num2 * 2 + 2);
+									clonedDefaultHashtable[zoneCode] = clonedDefaultHashtable[zoneCode].ToString().Substring(0, paramPos * 2) + zoneDataValueUser.ToString("x2").ToUpper() + clonedDefaultHashtable[zoneCode].ToString().Substring(paramPos * 2 + 2);
 								}
 								catch
 								{
-									MessageBox.Show(this, "Incorrect value in " + text + ": " + text2, "Error");
+									MessageBox.Show(this, "Incorrect value in " + zoneCode + ": " + zoneDescription, "Error");
 									return;
 								}
 							}
 						}
-						if (control3.GetType().ToString().Contains("ComboBox"))
+
+						if (tabControl.GetType().ToString().Contains("ComboBox"))
 						{
-							int selectedIndex = ((ComboBox)control3).SelectedIndex;
-							jObject = (JObject)((ComboBox)control3).Tag;
-							JArray jArray = jObject["listbox"].Value<JArray>();
-							JObject jObject2 = (JObject)jArray[0];
-							if (selectedIndex < jArray.Count)
+							int selectedIndex = ((ComboBox)tabControl).SelectedIndex;
+							jObject = (JObject)((ComboBox)tabControl).Tag;
+							JArray paramListboxJson = jObject["listbox"].Value<JArray>();
+							JObject selectedParamListboxJson = (JObject)paramListboxJson[0];
+							
+							if (selectedIndex < paramListboxJson.Count)
 							{
-								jObject2 = (JObject)jArray[selectedIndex];
+								selectedParamListboxJson = (JObject)paramListboxJson[selectedIndex];
 							}
 							else
 							{
-								jObject2["value"] = jObject["unknown"];
+								selectedParamListboxJson["value"] = jObject["unknown"];
 							}
-							byte b5 = byte.Parse(jObject2["value"].ToString(), NumberStyles.HexNumber);
-							b = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
-							text = jObject["zone"].ToString();
-							num2 = int.Parse(jObject["pos"].ToString()) - 4;
-							if (clonedDefaultHashtable[text].ToString().Length < 20 && text == "2108" && regex.Match(jObject["name"].ToString()).Success)
+
+							byte selectedParamValue = byte.Parse(selectedParamListboxJson["value"].ToString(), NumberStyles.HexNumber);
+							paramMask = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
+							zoneCode = jObject["zone"].ToString();
+							paramPos = int.Parse(jObject["pos"].ToString()) - 4;
+
+							if (clonedDefaultHashtable[zoneCode].ToString().Length < 20 && zoneCode == "2108" && regex.Match(jObject["name"].ToString()).Success)
 							{
-								num2--;
+								paramPos--;
 							}
-							byte b3 = byte.Parse(clonedDefaultHashtable[text].ToString().Substring(num2 * 2, 2), NumberStyles.HexNumber);
-							byte b4 = b3;
-							b3 = (byte)(b3 & ~b);
-							b3 = (byte)(b3 | b5);
-							if (b4 != b3)
+
+							byte nacZoneDataValue = byte.Parse(clonedDefaultHashtable[zoneCode].ToString().Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+							byte userZoneDataValue = nacZoneDataValue;
+							userZoneDataValue = (byte)(userZoneDataValue & ~paramMask);
+							userZoneDataValue = (byte)(userZoneDataValue | selectedParamValue);
+							
+							if (userZoneDataValue != nacZoneDataValue)
 							{
-								string text5 = text3;
-								text3 = text5 + text + ": " + ((JObject)jObject["detail"])[this.LanguageCode].ToString() + "\n";
+								paramsEditedList += zoneCode + ": " + ((JObject)jObject["detail"])[this.LanguageCode].ToString() + "\n";
 							}
-							clonedDefaultHashtable[text] = clonedDefaultHashtable[text].ToString().Substring(0, num2 * 2) + b3.ToString("x2").ToUpper() + clonedDefaultHashtable[text].ToString().Substring(num2 * 2 + 2);
+
+							clonedDefaultHashtable[zoneCode] = clonedDefaultHashtable[zoneCode].ToString().Substring(0, paramPos * 2) + userZoneDataValue.ToString("x2").ToUpper() + clonedDefaultHashtable[zoneCode].ToString().Substring(paramPos * 2 + 2);
 						}
-						if (!control3.GetType().ToString().Contains("TextBox") || control3.Tag.GetType().ToString().Contains("String"))
+
+						if (!tabControl.GetType().ToString().Contains("TextBox") || tabControl.Tag.GetType().ToString().Contains("String"))
 						{
 							continue;
 						}
-						jObject = (JObject)((TextBox)control3).Tag;
-						int num = 0;
-						b = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
-						text = jObject["zone"].ToString();
-						num2 = jObject["maskBinary"].ToString().LastIndexOf('1');
-						int num3 = int.Parse(jObject["size"].ToString());
-						num2 = 8 - num2 - 1;
-						byte b2 = (byte)(b >> num2);
+
+						jObject = (JObject)((TextBox)tabControl).Tag;
+						int paramUserValue = 0;
+						paramMask = byte.Parse(jObject["mask"].ToString(), NumberStyles.HexNumber);
+						zoneCode = jObject["zone"].ToString();
+						paramPos = jObject["maskBinary"].ToString().LastIndexOf('1');
+						int paramSize = int.Parse(jObject["size"].ToString());
+						paramPos = 8 - paramPos - 1;
+						byte paramMaxDigit = (byte)(paramMask >> paramPos);
+						
 						try
 						{
 							if (jObject["name"].ToString() == "DSZ")
 							{
-								int value = (int)((double.Parse(((TextBox)control3).Text.Replace(".", ",")) - 3.0) * 2.0);
-								num = (byte)Convert.ToInt16(value);
-								num += 86;
+								int value = (int)((double.Parse(((TextBox)tabControl).Text.Replace(".", ",")) - 3.0) * 2.0);
+								paramUserValue = (byte)Convert.ToInt16(value);
+								paramUserValue += 86;
 							}
 							else
 							{
-								int value2 = int.Parse(((TextBox)control3).Text);
-								num = Convert.ToInt16(value2);
+								int value2 = int.Parse(((TextBox)tabControl).Text);
+								paramUserValue = Convert.ToInt16(value2);
 							}
 						}
 						catch
 						{
 						}
-						if (num >= 0 && (double)num <= Math.Pow(unchecked((int)b2), num3))
+
+						double paramMaxValue = Math.Pow(unchecked((int)paramMaxDigit), paramSize);
+
+						if (paramUserValue >= 0 && (double)paramUserValue <= paramMaxValue)
 						{
-							if (num3 <= 1)
+							if (paramSize <= 1)
 							{
-								num = (byte)(num << num2);
+								paramUserValue = (byte)(paramUserValue << paramPos);
 							}
-							num2 = int.Parse(jObject["pos"].ToString()) - 4;
-							if (clonedDefaultHashtable[text].ToString().Length < 20 && text == "2108" && regex.Match(jObject["name"].ToString()).Success)
+
+							paramPos = int.Parse(jObject["pos"].ToString()) - 4;
+
+							if (clonedDefaultHashtable[zoneCode].ToString().Length < 20 && zoneCode == "2108" && regex.Match(jObject["name"].ToString()).Success)
 							{
-								num2--;
+								paramPos--;
 							}
-							int num5 = int.Parse(clonedDefaultHashtable[text].ToString().Substring(num2 * 2, num3 * 2), NumberStyles.HexNumber);
-							int num6 = num5;
-							if (num3 > 1)
+
+							int nacZoneDataValue = int.Parse(clonedDefaultHashtable[zoneCode].ToString().Substring(paramPos * 2, paramSize * 2), NumberStyles.HexNumber);
+							int userZoneDataValue = nacZoneDataValue;
+							if (paramSize > 1)
 							{
-								num5 = num;
+								userZoneDataValue = paramUserValue;
 							}
 							else
 							{
-								num5 = (byte)(num5 & ~b);
-								num5 |= num;
+								userZoneDataValue = (byte)(userZoneDataValue & ~paramMask);
+								userZoneDataValue |= paramUserValue;
 							}
-							if (num6 != num5)
+							if (nacZoneDataValue != userZoneDataValue)
 							{
-								string text5 = text3;
-								text3 = text5 + text + ": " + ((JObject)jObject["detail"])[this.LanguageCode].ToString() + "\n";
+								paramsEditedList += zoneCode + ": " + ((JObject)jObject["detail"])[this.LanguageCode].ToString() + "\n";
 							}
-							clonedDefaultHashtable[text] = clonedDefaultHashtable[text].ToString().Substring(0, num2 * 2) + num5.ToString("x2").ToUpper().PadLeft(num3 * 2, '0') + clonedDefaultHashtable[text].ToString().Substring(num2 * 2 + num3 * 2);
+							clonedDefaultHashtable[zoneCode] = clonedDefaultHashtable[zoneCode].ToString().Substring(0, paramPos * 2) + userZoneDataValue.ToString("x2").ToUpper().PadLeft(paramSize * 2, '0') + clonedDefaultHashtable[zoneCode].ToString().Substring(paramPos * 2 + paramSize * 2);
 						}
 					}
 				}
-				this._UserKeyValueHash.Clear();
-				foreach (DictionaryEntry item in this.DefaultKeyValueHash)
+				
+				// Clear previous user data
+				this._UserZoneValueHash.Clear();
+
+				// Copy to output hash
+				foreach (DictionaryEntry nacZoneKeyValue in this.NacZoneValueHash)
 				{
-					if (clonedDefaultHashtable.ContainsKey(item.Key) && item.Value.ToString() != clonedDefaultHashtable[item.Key].ToString())
+					if (clonedDefaultHashtable.ContainsKey(nacZoneKeyValue.Key) && nacZoneKeyValue.Value.ToString() != clonedDefaultHashtable[nacZoneKeyValue.Key].ToString())
 					{
-						this._UserKeyValueHash.Add(item.Key, clonedDefaultHashtable[item.Key]);
+						this._UserZoneValueHash.Add(nacZoneKeyValue.Key, clonedDefaultHashtable[nacZoneKeyValue.Key]);
 					}
 				}
-				text3 += "\r\nConfirm your change(s) ?";
-				if (this._UserKeyValueHash.Count > 0)
+
+				paramsEditedList += "\r\nConfirm your change(s) ?";
+				if (this._UserZoneValueHash.Count > 0)
 				{
-					if (MessageBox.Show(this, text3, "", MessageBoxButtons.YesNo) != DialogResult.No)
+					if (MessageBox.Show(this, paramsEditedList, "", MessageBoxButtons.YesNo) != DialogResult.No)
 					{
 						base.DialogResult = DialogResult.OK;
 						Close();
@@ -644,7 +777,7 @@ namespace PSA_Arduino_NAC
 
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
+			this.components = new Container();
 
 			this.SplitContainer1 = new SplitContainer();
 			this.TabControl1 = new TabControl();

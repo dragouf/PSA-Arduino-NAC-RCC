@@ -553,7 +553,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonNac.Enabled = false;
 			this.ZoneIndex = 0;
 
-			// Send((">" + "764" + ":" + "664");)
+			Send(">" + "764" + ":" + "664");
 			Send(this.OpenDiagCode);
 		}
 
