@@ -44,13 +44,19 @@ namespace PSA_Arduino_NAC
 
 		private string NacCalibration = "FFFFFF";
 
-		// 1003	Open Diagnostic session
+		/// <summary>
+		/// 1003 Open Diagnostic session
+		/// </summary>
 		private string OpenDiagCode = "1003";
 
-		// 1001	End of communication
+		/// <summary>
+		/// 1001	End of communication
+		/// </summary>
 		private string EndComCode = "1001";
 
-		// 2703	Unlocking service for configuration (Diagnostic session must be enabled first) - SEED
+		/// <summary>
+		/// 2703	Unlocking service for configuration (Diagnostic session must be enabled first) - SEED
+		/// </summary>
 		private string UnlockingConfCode = "2703";
 
 		private string CalibrationFilename = "";
@@ -67,11 +73,11 @@ namespace PSA_Arduino_NAC
 
 		private bool IsNacReading = false; 
 
-		private bool ConnectBool = false;
+		private bool isConnected = false;
 
 		private bool isNacUnlocked = false;
 
-		private bool IsDiagEnded = false; 
+		private bool needUnlocking = false; 
 
 		private bool IsConfLocked = false;
 
@@ -85,7 +91,7 @@ namespace PSA_Arduino_NAC
 
 		private int ZoneIndex = 0; 
 
-		private int ConnectInt = 0;
+		private int retryCount = 0;
 
 		private int SentCalLineCount = 0;
 
@@ -486,7 +492,7 @@ namespace PSA_Arduino_NAC
 			});
 		}
 
-		private void OnFormClosing(object P_0, FormClosingEventArgs P_1)
+		private void OnFormClosing(object sender, FormClosingEventArgs args)
 		{
 			if (this.SerialPortArduino != null && this.SerialPortArduino.IsOpen)
 			{
@@ -495,7 +501,7 @@ namespace PSA_Arduino_NAC
 			Application.Exit();
 		}
 
-		private void OnButtonSerialClick(object P_0, EventArgs P_1)
+		private void OnButtonSerialClick(object sender, EventArgs args)
 		{
 			this.ComPortName = this.ComboBoxCom.SelectedItem.ToString();
 			if (this.ButtonSerial.Text == "Arduino Connect")
@@ -516,7 +522,7 @@ namespace PSA_Arduino_NAC
 						this.ButtonSerial.Text = "Arduino Disconnect";
 						this.TextBoxLog.Text += "COM Port opened successfully";
 						this.ButtonNac.Enabled = true;
-						this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.IsDiagEnded = false)));
+						this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 						Send("00");
 					}
 					else
@@ -538,7 +544,7 @@ namespace PSA_Arduino_NAC
 				this.ButtonSend.Enabled = false;
 				this.ButtonBackup.Enabled = false;
 				this.ButtonRestore.Enabled = false;
-				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.IsDiagEnded = false)));
+				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 				if (this.SerialPortArduino != null && this.SerialPortArduino.IsOpen)
 				{
 					this.SerialPortArduino.Close();
@@ -558,62 +564,65 @@ namespace PSA_Arduino_NAC
 		}
 
 		private void OnButtonCalibrationUploadClick(object sender, EventArgs args)
-		{
-			OpenFileDialog openFileDialog = new OpenFileDialog();
-
-			int lineIndex = 0;
-            openFileDialog.Filter = "Calibration File (.cal)|*.cal";
-            openFileDialog.DefaultExt = ".cal";
-			openFileDialog.Multiselect = false;
-			bool flag = false;
-			
-			if (openFileDialog.ShowDialog(this) != DialogResult.OK)
-			{
-				return;
-			}
-
-			this.IsCalUploading = true;
-			this.IsZiErased = false;
-			this.CalibrationFilename = openFileDialog.FileName;
-			
-			StreamReader streamReader = new StreamReader(openFileDialog.FileName);
-            string calibrationLine;
-            while ((calibrationLine = streamReader.ReadLine()) != null)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                if (lineIndex == 1 && calibrationLine.Trim().StartsWith("S1100000") && calibrationLine.Trim().Contains(this.EcuCurrentKey))
-                {
-                    this.CalibrationSecondLine = calibrationLine.Trim();
-                    flag = true;
-                }
-                lineIndex++;
+                Filter = "Calibration File (.cal)|*.cal",
+                DefaultExt = ".cal",
+                Multiselect = false
+            };
+
+            bool flag = false;
+            int lineIndex = 0;
+            if (openFileDialog.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
             }
-            streamReader.Close();
 
-			if (!flag)
-			{
-				MessageBox.Show(this, "Calibration file invalid", "Error", MessageBoxButtons.OK);
-				return;
-			}
+            this.IsCalUploading = true;
+            this.IsZiErased = false;
+            this.CalibrationFilename = openFileDialog.FileName;
 
-			FileInfo fileInfo = new FileInfo(openFileDialog.FileName);
+            using (StreamReader streamReader = new StreamReader(openFileDialog.FileName))
+            {
+                string calibrationLine;
+                while ((calibrationLine = streamReader.ReadLine()) != null)
+                {
+                    if (lineIndex == 1 && calibrationLine.Trim().StartsWith("S1100000") && calibrationLine.Trim().Contains(this.EcuCurrentKey))
+                    {
+                        this.CalibrationSecondLine = calibrationLine.Trim();
+                        flag = true;
+                    }
+                    lineIndex++;
+                }
+            }
 
-			if (MessageBox.Show(this, "Are you sure you want to flash the unit with " + fileInfo.Name + " ?", "", MessageBoxButtons.YesNo) != DialogResult.No)
-			{
-				this.LabelCalibrationFileName.Text = fileInfo.Name;
-				this.SendProgressBar.Value = 0;
-				this.SendProgressBar.Maximum = lineIndex;
-				this.ButtonReadNac.Enabled = false;
-				this.ButtonCalibration.Enabled = false;
-				this.ButtonCancel.Enabled = false;
-				this.ButtonNac.Enabled = false;
+            if (!flag)
+            {
+                MessageBox.Show(this, "Calibration file invalid", "Error", MessageBoxButtons.OK);
+                return;
+            }
 
-				Send(this.EndComCode);
+            FileInfo fileInfo = new FileInfo(openFileDialog.FileName);
 
-				this.nextCommand = "3101FF0081F05A"; // 3101FF0081F05A	Empty flash memory (Unit must be unlocked first)
-			}
-		}
+            if (MessageBox.Show(this, "Are you sure you want to flash the unit with " + fileInfo.Name + " ?", "", MessageBoxButtons.YesNo) != DialogResult.No)
+            {
+                this.LabelCalibrationFileName.Text = fileInfo.Name;
+                this.SendProgressBar.Value = 0;
+                this.SendProgressBar.Maximum = lineIndex;
+                this.ButtonReadNac.Enabled = false;
+                this.ButtonCalibration.Enabled = false;
+                this.ButtonCancel.Enabled = false;
+                this.ButtonNac.Enabled = false;
 
-		private void SendCalibrationYield()
+                Send(this.EndComCode);
+
+				// 3101FF0081F05A	Empty flash memory (Unit must be unlocked first)
+				this.nextCommand = "3101FF0081F05A"; 
+            }
+        }
+
+        private void YieldSendCalibration()
         {
             string calibrationLineData = "";
             string calData = "";
@@ -681,7 +690,7 @@ namespace PSA_Arduino_NAC
             }
         }
 
-        private void OnReadNacButtonClick(object P_0, EventArgs P_1)
+        private void OnReadNacButtonClick(object sender, EventArgs args)
 		{
 			this.ButtonReadNac.Enabled = false;
 			this.ButtonCalibration.Enabled = false;
@@ -766,12 +775,14 @@ namespace PSA_Arduino_NAC
 				else if (rcvData.StartsWith("50C0") && this.IsConfLocked) // KWP2000 50C0	Diagnostic session opened
 				{
 					unprocessedData = "";
+					// 2783	Unlocking service for configuration (Diagnostic session must be enabled first) - SEED
 					Send("2783");
 					this.IsConfLocked = false;
 				}
 				else if (rcvData.StartsWith("5002")) // 5002XXXXXXXX	Download session opened
 				{
 					unprocessedData = "";
+					// 2701	Unlocking service for download (Diagnostic session must be enabled first) - SEED
 					Send("2701");
 				}
 				else if ((rcvData.StartsWith("5001") || rcvData.StartsWith("7F277F")) && this.IsCalUploading) // 5001XXXXXXXX	Communication closed
@@ -780,18 +791,20 @@ namespace PSA_Arduino_NAC
 
 					// 1002	Open Download session
 					Send("1002");
-					this.IsDiagEnded = true;
+					this.needUnlocking = true;
 				}
-				else if (rcvData.StartsWith("5001") || rcvData.StartsWith("7F277F")) // 5001XXXXXXXX	Communication closed
+				else if (rcvData.StartsWith("5001") || rcvData.StartsWith("7F277F")) // 5001XXXXXXXX	Communication closed // 7FXXYY	Error - XX = Service / YY = Error Number
 				{
 					unprocessedData = "";
 					Send(this.OpenDiagCode);
-					this.IsDiagEnded = true;
+					this.needUnlocking = true;
 				}
 				else if (rcvData.StartsWith("7103FF0401"))
 				{
 					unprocessedData = "";
 					Thread.Sleep(100);
+
+					// 3103FF04	Empty ZI Zone (Unit must be unlocked first)
 					Send("3103FF04");
 				}
 				else if (rcvData.StartsWith("7601") && this.IsZiErased)
@@ -813,29 +826,37 @@ namespace PSA_Arduino_NAC
 							this.LabelStatus.Text = "Download in progress... " + num;
 						});
 					}
+
 					this.SentCalLineCount++;
-					this.SendCalibrationYield();
+					this.YieldSendCalibration();
 				}
 				else if (rcvData.StartsWith("7101FF0001")) // 7101FF0001	Flash erased successfully
 				{
 					unprocessedData = "";
+
+					// 3103FF00	Empty flash memory (Unit must be unlocked first)
 					Send("3103FF00");
 				}
 				else if (rcvData.StartsWith("7103FF0001"))
 				{
 					unprocessedData = "";
+
+					// 3103FF00	Empty flash memory (Unit must be unlocked first)
 					Send("3103FF00");
 				}
 				else if (rcvData.StartsWith("7103FF0002")) // 7103FF0002	Flash erased successfully
 				{
 					unprocessedData = "";
+
+					// 3481110000	Prepare flash writing (Unit must be unlocked first)
 					Send("3481110000");
 				}
 				else if (rcvData.StartsWith("741000") && !this.IsZiErased) // 741000	Download Writing ready
 				{
 					unprocessedData = "";
+
 					this.SentCalLineCount = 1;
-					this.SendCalibrationYield();
+					this.YieldSendCalibration();
 				}
 				else if (rcvData.StartsWith("7101FF0401")) // 7101FF0401	ZI erased successfully
 				{
@@ -848,7 +869,8 @@ namespace PSA_Arduino_NAC
 				else if (rcvData.StartsWith("7103FF0402")) // 7103FF0402	ZI erased successfully
 				{
 					unprocessedData = "";
-					Send("3483110000"); // Prepare ZI zone writing (Unit must be unlocked first)
+					// Prepare ZI zone writing (Unit must be unlocked first)
+					Send("3483110000"); 
 				}
 				else if (rcvData.StartsWith("741000") && this.IsZiErased) // 741000	Download Writing ready
 				{
@@ -867,7 +889,7 @@ namespace PSA_Arduino_NAC
 
 					Send(calibrationResponse + this.CalibrationHash(calibrationResponse));
 				}
-				else if (rcvData.StartsWith("5003") && !this.IsDiagEnded) // 5003XXXXXXXX	Diagnostic session opened
+				else if (rcvData.StartsWith("5003") && !this.needUnlocking) // 5003XXXXXXXX	Diagnostic session opened
 				{
 					unprocessedData = "";
 					Invoke((Action)delegate
@@ -875,9 +897,11 @@ namespace PSA_Arduino_NAC
 						this.ButtonSerial.Text = "Arduino Disconnect";
 					});
 
+					// 22XXXX Read Zone XXXX(2 bytes)
+					// F0FE	ZI Zone (Last 6 characters: current calibration)
 					Send("22F0FE");
 				}
-				else if (rcvData.StartsWith("50C0") && !this.IsDiagEnded) // KWP2000  50C0	Diagnostic session opened
+				else if (rcvData.StartsWith("50C0") && !this.needUnlocking) // KWP2000  50C0	Diagnostic session opened
 				{
 					unprocessedData = "";
 					Invoke((Action)delegate
@@ -885,19 +909,21 @@ namespace PSA_Arduino_NAC
 						this.ButtonSerial.Text = "Arduino Disconnect";
 					});
 
+					// 21XX	Read Zone XX (1 byte)
+					// FE	ZI Zone (Last 6 characters: current calibration)
 					Send("21FE");
 				}
-				else if (rcvData.StartsWith("5003") && this.IsDiagEnded) // Diagnostic session opened
+				else if (rcvData.StartsWith("5003") && this.needUnlocking) // Diagnostic session opened
 				{
 					unprocessedData = "";
-					this.IsDiagEnded = false;
+					this.needUnlocking = false;
 
 					Send(this.UnlockingConfCode);
 				}
-				else if (rcvData.StartsWith("50C0") && this.IsDiagEnded) // KWP2000  50C0	Diagnostic session opened
+				else if (rcvData.StartsWith("50C0") && this.needUnlocking) // KWP2000  50C0	Diagnostic session opened
 				{
 					unprocessedData = "";
-					this.IsDiagEnded = false;
+					this.needUnlocking = false;
 					// 2783	Unlocking service for configuration (Diagnostic session must be enabled first) - SEED
 					Send("2783");
 				}
@@ -945,15 +971,17 @@ namespace PSA_Arduino_NAC
 					//Read Zone XXXX (2 bytes)
 					Send("22F080");
 				}
-				else if (rcvData.StartsWith("62F080"))
-				{
+				else if (rcvData.StartsWith("62F080")) // 62XXXXYYYYYYYYYYYY	Successfull read of Zone XXXX - YYYYYYYYYYYY = DATA
+				{ // F080	ZA Zone
 					this.NacCalibration = rcvData.Substring(20, 10);
 
 					// Read Zone XXXX (2 bytes)
+					// Telecoding_Serial (SN)
 					Send("22F18C");
 				}
-				else if (rcvData.StartsWith("61FE")) // calibration received
-				{
+				else if (rcvData.StartsWith("61FE")) // 61XXYYYYYYYYYYYY Successfull read of Zone XX -YYYYYYYYYYYY = DATA
+				{ // calibration received
+				  // FE	ZI Zone (Last 6 characters: current calibration)
 					this.NacCalibration = rcvData.Substring(rcvData.Length - 6);
 					Invoke((Action)delegate
 					{
@@ -982,7 +1010,7 @@ namespace PSA_Arduino_NAC
 		{
 			if (this.ZoneIndex == 1000)
 			{
-				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.IsDiagEnded = false)));
+				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 				
 				Invoke((Action)delegate
 				{
@@ -1057,7 +1085,7 @@ namespace PSA_Arduino_NAC
 						return;
 					}
 				}
-				else if (rcvData.StartsWith("6E2901") || rcvData.StartsWith("7F2E24"))
+				else if (rcvData.StartsWith("6E2901") || rcvData.StartsWith("7F2E24")) // 6EXXXX	Successfull Configuration Write of Zone XXXX // 7F2EXX	Failed Configuration Write
 				{
 					Invoke((Action)delegate
 					{
@@ -1099,39 +1127,43 @@ namespace PSA_Arduino_NAC
 						this.TextBoxLog.AppendText("Flash autocontrol OK\n");
 					});
 					Thread.Sleep(100);
+
+					// 3101FF04	Empty ZI Zone (Unit must be unlocked first)
 					Send("3101FF04");
 				}
-				else if (rcvData.StartsWith("7F2E78"))
+				else if (rcvData.StartsWith("7F2E78")) // 7F2E78	Configuration Write in progress
 				{
 					Invoke((Action)delegate
 					{
 						this.TextBoxLog.AppendText("Writing in progress\n");
 					});
 				}
-				else if (rcvData.StartsWith("7F1012"))
+				else if (rcvData.StartsWith("7F1012")) // 7FXXYY	Error - XX = Service / YY = Error Number
 				{
 					this.OpenDiagCode = "10C0"; // OPEN DIAG SMEG CODE
+
 					Send(this.OpenDiagCode);
+
 					Invoke((Action)delegate
 					{
 						this.TextBoxLog.AppendText("Changing Diagnostic Session message\n");
 					});
 				}
-				else if (rcvData.StartsWith("7F3422"))
+				else if (rcvData.StartsWith("7F3422")) // 7FXXYY	Error - XX = Service / YY = Error Number
 				{
 					Invoke((Action)delegate
 					{
 						this.LabelStatus.Text = "ZI zone not writable... ";
 					});
 				}
-				else if (rcvData.StartsWith("7F3478"))
+				else if (rcvData.StartsWith("7F3478")) // 7F3478	Download Writing in progress
 				{
 					Invoke((Action)delegate
 					{
 						this.LabelStatus.Text = "Download in progress... ";
 					});
 				}
-				else if (rcvData.StartsWith("7F3778"))
+				else if (rcvData.StartsWith("7F3778")) // 7F3778	Flash autocontrol in progress
 				{
 					Invoke((Action)delegate
 					{
@@ -1141,7 +1173,7 @@ namespace PSA_Arduino_NAC
 						this.TextBoxLog.AppendText("Flash autocontrol in progress\n");
 					});
 				}
-				else if (rcvData.StartsWith("5103"))
+				else if (rcvData.StartsWith("5103")) // 5103	Reboot OK
 				{
 					Invoke((Action)delegate
 					{
@@ -1169,7 +1201,7 @@ namespace PSA_Arduino_NAC
 
 					this.nextCommand = "";
 				}
-				else if (this.ConnectBool && this.isNacUnlocked && this.ZoneIndex < this.ZoneValueHash.Count)
+				else if (this.isConnected && this.isNacUnlocked && this.ZoneIndex < this.ZoneValueHash.Count)
 				{
 					JContainer zonesJson = (JContainer)this.JsonObject["NAC"]["zones"];
 
@@ -1190,10 +1222,10 @@ namespace PSA_Arduino_NAC
 							this.ButtonRestore.Enabled = false;
 							this.SendProgressBar.Value = 0;
 							this.SendProgressBar.Maximum = 60;
-							string text9 = (this.LabelNac.Text = (this.LabelCalibrationId.Text = ""));
+							this.LabelNac.Text = (this.LabelCalibrationId.Text = "");
 						});
 						this.ZoneIndex = 0;
-						this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.IsDiagEnded = false)));
+						this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 						return;
 					}
 
@@ -1234,29 +1266,32 @@ namespace PSA_Arduino_NAC
 
 				// 7F22XX	Failed Configuration Read
 				if (rcvData.StartsWith("7F22"))
-				{
-					if (this.ConnectInt <= 3 && currentZoneKey != "2133" && currentZoneKey != "2145")
+				{ // retry
+					// 2133 Telecoding_Fct_WAVE3
+					// 2145 Telecoding_Fct_AIO
+					if (this.retryCount <= 3 && currentZoneKey != "2133" && currentZoneKey != "2145")
 					{
-						this.ConnectInt++;
+						this.retryCount++;
 						this.ZoneIndex--;
 						Thread.Sleep(500);
-						ContinueZoneReading();
+
+						YieldZoneReading();
 						return;
 					}
 
-					this.ConnectInt = 0;
+					this.retryCount = 0;
 
 					Invoke((Action)delegate
 					{
 						this.TextBoxLog.AppendText("Error reading zone " + currentZoneKey + " IGNORING\n");
 						this.SendProgressBar.PerformStep();
 						this.LabelNac.Text = this.SendProgressBar.Value + "/" + this.SendProgressBar.Maximum;
-						ContinueZoneReading();
+						YieldZoneReading();
 					});
 				}
 				else
 				{
-					this.ConnectInt = 0;
+					this.retryCount = 0;
 					currentZoneValueStart = rcvData.IndexOf(currentZoneKey) + 4;
 					int currentZoneValueEnd = rcvData.IndexOf("\n", currentZoneValueStart);
 					string currentZoneValue = rcvData.Substring(currentZoneValueStart, currentZoneValueEnd - currentZoneValueStart).Trim();
@@ -1268,14 +1303,15 @@ namespace PSA_Arduino_NAC
 						this.LabelNac.Text = this.SendProgressBar.Value + "/" + this.SendProgressBar.Maximum;
 					});
 
+					// write value to json
 					this.JsonObject[currentZoneKey] = currentZoneValue;
 
-					ContinueZoneReading();
+					YieldZoneReading();
 				}
 			}
 		}
 
-		private void ContinueZoneReading()
+		private void YieldZoneReading()
 		{
 			checked
 			{
@@ -1358,7 +1394,7 @@ namespace PSA_Arduino_NAC
 
 				this.ZoneIndex = 0;
 
-				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.IsDiagEnded = false)));
+				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 			}
 		}
 
@@ -1393,7 +1429,7 @@ namespace PSA_Arduino_NAC
 				this.ZonesKeyDescriptionFlatList.Add(zone.Key as string);
 			}
 
-			this.ConnectBool = true;
+			this.isConnected = true;
 			this.ZoneIndex = 0;
 			JContainer zonesJson = (JContainer)this.JsonObject["NAC"]["zones"];
 			this.SendProgressBar.Maximum = this.ZoneValueHash.Count;
@@ -1420,7 +1456,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonCalibration.Enabled = true;
 			this.SendProgressBar.Value = 0;
 			this.LabelNac.Text = this.LabelStatus.Text = "";
-			this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.IsDiagEnded = false)));
+			this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 		}
 
 		private void OnButtonBackupClick(object P_0, EventArgs P_1)
@@ -1504,7 +1540,7 @@ namespace PSA_Arduino_NAC
                 }
             }
 
-            this.ConnectBool = true;
+            this.isConnected = true;
             this.ZoneIndex = 0;
             JContainer zonesJson = (JContainer)this.JsonObject["NAC"]["zones"];
             this.SendProgressBar.Maximum = this.ZoneValueHash.Count;
