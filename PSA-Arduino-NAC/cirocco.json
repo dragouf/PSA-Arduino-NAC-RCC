@@ -33,7 +33,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Limitation de vitesse véhicule",
+              "fr": "Limitation de vitesse vÃ©hicule",
               "en": "Vehicle speed limitation"
             },
             "pos": 4,
@@ -45,7 +45,7 @@
             "name": "EWR",
             "extra_name": "EWR_ELECTRICAL_MOTOR",
             "detail": {
-              "fr": "Véhicule Electrique",
+              "fr": "VÃ©hicule Electrique",
               "en": "Electric Vehicle"
             },
             "pos": 4,
@@ -57,7 +57,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Régulation de vitesse véhicule (RVV)",
+              "fr": "RÃ©gulation de vitesse vÃ©hicule (RVV)",
               "en": "Cruise control (RVV)"
             },
             "pos": 4,
@@ -69,7 +69,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Régulation de vitesse adaptée (ACC)",
+              "fr": "RÃ©gulation de vitesse adaptÃ©e (ACC)",
               "en": "Adaptative Cruise Control (ACC)"
             },
             "pos": 4,
@@ -93,7 +93,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Indicateur de changement de rapport conseillé",
+              "fr": "Indicateur de changement de rapport conseillÃ©",
               "en": "Recommended gear change indicator"
             },
             "pos": 5,
@@ -117,7 +117,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Système Stop and Start",
+              "fr": "SystÃ¨me Stop and Start",
               "en": "Stop and Start system"
             },
             "pos": 7,
@@ -266,7 +266,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Accès démarrage main-libres",
+              "fr": "AccÃ¨s dÃ©marrage main-libres",
               "en": "Hands free starting access"
             },
             "pos": 15,
@@ -390,7 +390,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Aide à la vision nocturne",
+              "fr": "Aide Ã  la vision nocturne",
               "en": "Night vision assistance"
             },
             "pos": 16,
@@ -414,7 +414,7 @@
             "name": "DXJ",
             "extra_name": "DXJ_REAR_VC",
             "detail": {
-              "fr": "Caméra de recul",
+              "fr": "CamÃ©ra de recul",
               "en": "Reverse camera"
             },
             "pos": 20,
@@ -426,7 +426,7 @@
             "name": "DXK",
             "extra_name": "DXK_PANORAMIC_VC",
             "detail": {
-              "fr": "Caméra de recul panoramique",
+              "fr": "CamÃ©ra de recul panoramique",
               "en": "Panoramic reverse camera"
             },
             "pos": 20,
@@ -438,7 +438,7 @@
             "name": "DXK",
             "extra_name": "DXK_PANORAMIC_VC",
             "detail": {
-              "fr": "Type de caméra d'aide visuelle panoramique",
+              "fr": "Type de camÃ©ra d'aide visuelle panoramique",
               "en": "Type of panoramic visual assistance camera"
             },
             "pos": 20,
@@ -480,7 +480,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Voyant d'urée",
+              "fr": "Voyant d'urÃ©e",
               "en": "Urea warning lamp"
             },
             "pos": 17,
@@ -492,7 +492,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Système de stationnement semi-automatique",
+              "fr": "SystÃ¨me de stationnement semi-automatique",
               "en": "Semi-automatic parking system"
             },
             "pos": 21,
@@ -504,7 +504,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Sièges, rang 3",
+              "fr": "SiÃ¨ges, rang 3",
               "en": "Seats, row 3"
             },
             "pos": 22,
@@ -528,7 +528,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Fonction de personnalisation du fond d'écran",
+              "fr": "Fonction de personnalisation du fond d'Ã©cran",
               "en": "Screen background personalisation function"
             },
             "pos": 22,
@@ -540,7 +540,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Alertes visuelle et sonore du frein de stationnement non serré",
+              "fr": "Alertes visuelle et sonore du frein de stationnement non serrÃ©",
               "en": "Parking brake Visual and Sound Alerts"
             },
             "pos": 22,
@@ -564,7 +564,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Configuration de l'éclairage d'ambiance",
+              "fr": "Configuration de l'Ã©clairage d'ambiance",
               "en": "Ambience lighting"
             },
             "pos": 22,
@@ -697,7 +697,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Régulation de vitesse adaptée",
+              "fr": "RÃ©gulation de vitesse adaptÃ©e",
               "en": "Adapted cruise control"
             },
             "pos": 22,
@@ -772,7 +772,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Aide au maintien de la trajectoire du véhicule dans la voie",
+              "fr": "Aide au maintien de la trajectoire du vÃ©hicule dans la voie",
               "en": "Lane positioning assist"
             },
             "pos": 7,
@@ -890,7 +890,7 @@
             "name": "AAA",
             "extra_name": "AAA_",
             "detail": {
-              "fr": "Numéro de l'ambiance par défaut",
+              "fr": "NumÃ©ro de l'ambiance par dÃ©faut",
               "en": "Number of the default ambience"
             },
             "pos": 39,
