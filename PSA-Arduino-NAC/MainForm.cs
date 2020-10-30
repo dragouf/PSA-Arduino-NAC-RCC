@@ -89,13 +89,13 @@ namespace PSA_Arduino_NAC
 
 		private string nextCommand = "";
 
-		private int ZoneIndex = 0; 
+		private int CurrentZoneIndex = 0; 
 
 		private int retryCount = 0;
 
 		private int SentCalLineCount = 0;
 
-		private string ZoneKeyInt = "";
+		private string CurrentZoneKey = "";
 
 		public Hashtable NacZoneValueHash = new Hashtable(); 
 
@@ -103,7 +103,7 @@ namespace PSA_Arduino_NAC
 
 		private List<string> ZonesKeyDescriptionFlatList = new List<string>(); 
 
-		private Hashtable ZoneValueHash = new Hashtable(); 
+		private Hashtable NewZoneValueHash = new Hashtable(); 
 
 		private ushort[] CalibrationData = new ushort[256] // m__00A0
 		{
@@ -392,6 +392,8 @@ namespace PSA_Arduino_NAC
 		private Label LabelNac;
 
 		private Button ButtonParams;
+		
+		private Button ButtonOfflineEditor;
 
 		private Button ButtonCancel; 
 
@@ -557,7 +559,7 @@ namespace PSA_Arduino_NAC
 		private void OnButtonReadNacClick(object sender, EventArgs args)
 		{
 			this.ButtonNac.Enabled = false;
-			this.ZoneIndex = 0;
+			this.CurrentZoneIndex = 0;
 
 			Send(">" + "764" + ":" + "664");
 			Send(this.OpenDiagCode);
@@ -703,7 +705,7 @@ namespace PSA_Arduino_NAC
 			this.SendProgressBar.Maximum = nbZones;
 			this.LabelNac.Text = "0/" + nbZones;
 			this.IsNacReading = true;
-			this.ZoneIndex = 0;
+			this.CurrentZoneIndex = 0;
 			this.NacZoneValueHash = new Hashtable();
 			this.ZonesKeyDescriptionFlatList = new List<string>();
 			
@@ -715,10 +717,10 @@ namespace PSA_Arduino_NAC
 
 			// start with first zone
 			this.LabelStatus.Text = this.ZonesKeyDescriptionFlatList[0].ToString().Split(';')[1];
-			this.ZoneKeyInt = this.ZonesKeyDescriptionFlatList[0].ToString().Split(';')[0];
+			this.CurrentZoneKey = this.ZonesKeyDescriptionFlatList[0].ToString().Split(';')[0];
 
 			// 22XXXX	Read Zone XXXX (2 bytes)
-			Send("22" + this.ZoneKeyInt);
+			Send("22" + this.CurrentZoneKey);
 		}
 
 		private void OnDataReceived(object sender, SerialDataReceivedEventArgs args)
@@ -975,8 +977,8 @@ namespace PSA_Arduino_NAC
 				{ // F080	ZA Zone
 					this.NacCalibration = rcvData.Substring(20, 10);
 
-					// Read Zone XXXX (2 bytes)
-					// Telecoding_Serial (SN)
+					// 22XXXX	Read Zone XXXX (2 bytes)
+					// F18C Telecoding_Serial (SN)
 					Send("22F18C");
 				}
 				else if (rcvData.StartsWith("61FE")) // 61XXYYYYYYYYYYYY Successfull read of Zone XX -YYYYYYYYYYYY = DATA
@@ -1008,7 +1010,7 @@ namespace PSA_Arduino_NAC
 
 		private void ProcessResponse(string rcvData)
 		{
-			if (this.ZoneIndex == 1000)
+			if (this.CurrentZoneIndex == 1000)
 			{
 				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 				
@@ -1195,13 +1197,13 @@ namespace PSA_Arduino_NAC
 						this.TextBoxLog.AppendText("NAC/RCC Unlocked successfully\n");
 					});
 
-					this.ZoneIndex = 0;
+					this.CurrentZoneIndex = 0;
 
 					Send(this.nextCommand);
 
 					this.nextCommand = "";
 				}
-				else if (this.isConnected && this.isNacUnlocked && this.ZoneIndex < this.ZoneValueHash.Count)
+				else if (this.isConnected && this.isNacUnlocked && this.CurrentZoneIndex < this.NewZoneValueHash.Count)
 				{
 					JContainer zonesJson = (JContainer)this.JsonObject["NAC"]["zones"];
 
@@ -1210,9 +1212,9 @@ namespace PSA_Arduino_NAC
 					{
 						Invoke((Action)delegate
 						{
-							this.TextBoxLog.AppendText(this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString() + " : " + zonesJson[this.ZoneKeyInt]["name"].ToString() + ": Writing error");
+							this.TextBoxLog.AppendText(this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString() + " : " + zonesJson[this.CurrentZoneKey]["name"].ToString() + ": Writing error");
 							this.SendProgressBar.Value = 0;
-							this.LabelStatus.Text = "Writing Error ! Invalid value on " + this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString();
+							this.LabelStatus.Text = "Writing Error ! Invalid value on " + this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString();
 							this.ButtonReadNac.Enabled = false;
 							this.ButtonNac.Enabled = true;
 							this.ButtonCalibration.Enabled = false;
@@ -1224,14 +1226,14 @@ namespace PSA_Arduino_NAC
 							this.SendProgressBar.Maximum = 60;
 							this.LabelNac.Text = (this.LabelCalibrationId.Text = "");
 						});
-						this.ZoneIndex = 0;
+						this.CurrentZoneIndex = 0;
 						this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 						return;
 					}
 
 					Invoke((Action)delegate
 					{
-						this.TextBoxLog.AppendText("Zone " + zonesJson[this.ZoneKeyInt]["name"].ToString() + " written successfully\n");
+						this.TextBoxLog.AppendText("Zone " + zonesJson[this.CurrentZoneKey]["name"].ToString() + " written successfully\n");
 					});
 
 					Invoke((Action)delegate
@@ -1240,15 +1242,15 @@ namespace PSA_Arduino_NAC
 						this.LabelNac.Text = this.SendProgressBar.Value + "/" + this.SendProgressBar.Maximum;
 					});
 
-					this.ZoneIndex++;
-					if (this.ZoneIndex < this.ZoneValueHash.Count)
+					this.CurrentZoneIndex++;
+					if (this.CurrentZoneIndex < this.NewZoneValueHash.Count)
 					{
-						this.ZoneKeyInt = this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString();
+						this.CurrentZoneKey = this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString();
 						Invoke((Action)delegate
 						{
-							this.LabelStatus.Text = this.ZoneKeyInt + ": " + zonesJson[this.ZoneKeyInt]["name"].ToString();
+							this.LabelStatus.Text = this.CurrentZoneKey + ": " + zonesJson[this.CurrentZoneKey]["name"].ToString();
 							// 2EXXXXYYYYYYYYYYYY	Write Zone XXXX with data YYYYYYYYYYYY (Unit must be unlocked first)
-							Send("2E" + this.ZoneKeyInt + this.ZoneValueHash[this.ZoneKeyInt].ToString());
+							Send("2E" + this.CurrentZoneKey + this.NewZoneValueHash[this.CurrentZoneKey].ToString());
 						});
 						return;
 					}
@@ -1257,12 +1259,12 @@ namespace PSA_Arduino_NAC
 					Send("2E2901FD000000010101");
 				}
 
-				if (!this.IsNacReading || this.ZoneIndex >= ((JContainer)this.JsonObject["NAC"]["zones"]).Count)
+				if (!this.IsNacReading || this.CurrentZoneIndex >= ((JContainer)this.JsonObject["NAC"]["zones"]).Count)
 				{
 					return;
 				}
 
-				string currentZoneKey = this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString().Split(';')[0];
+				string currentZoneKey = this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString().Split(';')[0];
 
 				// 7F22XX	Failed Configuration Read
 				if (rcvData.StartsWith("7F22"))
@@ -1272,7 +1274,7 @@ namespace PSA_Arduino_NAC
 					if (this.retryCount <= 3 && currentZoneKey != "2133" && currentZoneKey != "2145")
 					{
 						this.retryCount++;
-						this.ZoneIndex--;
+						this.CurrentZoneIndex--;
 						Thread.Sleep(500);
 
 						YieldZoneReading();
@@ -1315,18 +1317,18 @@ namespace PSA_Arduino_NAC
 		{
 			checked
 			{
-				this.ZoneIndex++;
+				this.CurrentZoneIndex++;
 				
 				// zone reading continue
-				if (this.ZoneIndex < ((JContainer)this.JsonObject["NAC"]["zones"]).Count)
+				if (this.CurrentZoneIndex < ((JContainer)this.JsonObject["NAC"]["zones"]).Count)
 				{
 					Invoke((Action)delegate
 					{
-						this.LabelStatus.Text = this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString().Split(';')[1];
+						this.LabelStatus.Text = this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString().Split(';')[1];
 						Thread.Sleep(100);
 
 						// 22XXXX	Read Zone XXXX (2 bytes)
-						Send("22" + this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString().Split(';')[0]);
+						Send("22" + this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString().Split(';')[0]);
 					});
 					return;
 				}
@@ -1343,7 +1345,7 @@ namespace PSA_Arduino_NAC
 				});
 
 				this.IsNacReading = false;
-				this.ZoneIndex = 0;
+				this.CurrentZoneIndex = 0;
 
 				File.AppendAllText(this.LogFilePath, "------------------------------------------------------\n");
 				
@@ -1392,13 +1394,93 @@ namespace PSA_Arduino_NAC
 					this.ButtonNac.Enabled = true;
 				});
 
-				this.ZoneIndex = 0;
+				this.CurrentZoneIndex = 0;
 
 				this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 			}
 		}
 
-		private void OnButtonParamsClick(object P_0, EventArgs P_1)
+		private void OnButtonOfflineEditorClick(object sender, EventArgs args)
+		{
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                DefaultExt = ".nac",
+                Multiselect = false,
+                Filter = "PSA-Arduino-NAC sav (*.nac) | *.nac"
+            };
+
+            if (openFileDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			string zonesInline = "";
+
+			foreach (JProperty zonesNode in this.JsonObject.Root["NAC"]["zones"])
+			{
+				zonesInline += zonesNode.Name + ";";
+			}
+
+			var keyValueHash = new Hashtable();
+
+			using (StreamReader streamReader = new StreamReader(openFileDialog.FileName))
+			{
+				string backupFileLine;
+				while ((backupFileLine = streamReader.ReadLine()) != null)
+				{
+					string[] zoneKeyValue = backupFileLine.Trim().Split('=');
+					string zoneKey = zoneKeyValue[0];
+					string zoneValue = zoneKeyValue[1];
+
+					// F18C	Serial number
+					if (zoneValue != "" && zonesInline.Contains(zoneKey))
+					{
+						keyValueHash.Add(zoneKey, zoneValue);
+					}
+				}
+			}
+
+			// open params form
+			var form = new ParamsForm();
+			form.InitForm(ref keyValueHash, ref this.JsonObject);
+			DialogResult dialogResult = form.ShowDialog(this);
+
+			var newKeyValueHash = form.UserKeyValueHash();
+
+			// params form closed
+			foreach (DictionaryEntry zoneKeyValue in newKeyValueHash)
+            {
+				keyValueHash[zoneKeyValue.Key] = zoneKeyValue.Value;
+			}
+
+			if (dialogResult != DialogResult.OK)
+			{
+				return;
+			}
+
+			string zoneValueFlatList = "";
+			SaveFileDialog saveFileDialog = new SaveFileDialog
+			{
+				DefaultExt = ".nac",
+				Filter = "PSA-Arduino-NAC sav (*.nac) | *.nac"
+			};
+
+			if (saveFileDialog.ShowDialog(this) != DialogResult.OK)
+			{
+				return;
+			}
+
+			using (StreamWriter streamWriter = new StreamWriter(saveFileDialog.FileName, false))
+			{
+				foreach (DictionaryEntry zone in keyValueHash)
+				{
+					zoneValueFlatList = string.Concat(zoneValueFlatList, zone.Key, "=", zone.Value, ";");
+					streamWriter.WriteLine(string.Concat(zone.Key, "=", zone.Value));
+				}
+			}
+		}
+
+		private void OnButtonParamsClick(object sender, EventArgs args)
 		{
 			// open params form
 			var form = new ParamsForm();
@@ -1406,7 +1488,7 @@ namespace PSA_Arduino_NAC
 			DialogResult dialogResult = form.ShowDialog(this);
 
 			// params form closed
-			this.ZoneValueHash = form.UserKeyValueHash();
+			this.NewZoneValueHash = form.UserKeyValueHash();
 			
 			if (dialogResult != DialogResult.OK)
 			{
@@ -1417,26 +1499,26 @@ namespace PSA_Arduino_NAC
 
 			foreach (DictionaryEntry item in this.NacZoneValueHash)
 			{
-				if (this.ZoneValueHash.ContainsKey(item.Key) && item.Value.ToString() != this.ZoneValueHash[item.Key].ToString())
+				if (this.NewZoneValueHash.ContainsKey(item.Key) && item.Value.ToString() != this.NewZoneValueHash[item.Key].ToString())
 				{
-					File.AppendAllText(this.LogFilePath, item.Key.ToString() + " : " + item.Value.ToString() + " => " + this.ZoneValueHash[item.Key].ToString() + "\n");
+					File.AppendAllText(this.LogFilePath, item.Key.ToString() + " : " + item.Value.ToString() + " => " + this.NewZoneValueHash[item.Key].ToString() + "\n");
 				}
 			}
 			this.ZonesKeyDescriptionFlatList.Clear();
 
-			foreach (DictionaryEntry zone in this.ZoneValueHash)
+			foreach (DictionaryEntry zone in this.NewZoneValueHash)
 			{
 				this.ZonesKeyDescriptionFlatList.Add(zone.Key as string);
 			}
 
 			this.isConnected = true;
-			this.ZoneIndex = 0;
+			this.CurrentZoneIndex = 0;
 			JContainer zonesJson = (JContainer)this.JsonObject["NAC"]["zones"];
-			this.SendProgressBar.Maximum = this.ZoneValueHash.Count;
+			this.SendProgressBar.Maximum = this.NewZoneValueHash.Count;
 			this.SendProgressBar.Value = 0;
 			this.LabelNac.Text = "0/" + this.SendProgressBar.Maximum;
-			this.ZoneKeyInt = this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString();
-			this.LabelStatus.Text = this.ZoneKeyInt + ": " + zonesJson[this.ZoneKeyInt]["name"].ToString();
+			this.CurrentZoneKey = this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString();
+			this.LabelStatus.Text = this.CurrentZoneKey + ": " + zonesJson[this.CurrentZoneKey]["name"].ToString();
 			this.ButtonCancel.Enabled = true;
 			this.ButtonBackup.Enabled = false;
 			this.ButtonRestore.Enabled = false;
@@ -1446,12 +1528,12 @@ namespace PSA_Arduino_NAC
 			this.IsConfLocked = true;
 
 			// 2EXXXXYYYYYYYYYYYY	Write Zone XXXX with data YYYYYYYYYYYY (Unit must be unlocked first)
-			this.nextCommand = "2E" + this.ZoneKeyInt + this.ZoneValueHash[this.ZoneKeyInt].ToString();
+			this.nextCommand = "2E" + this.CurrentZoneKey + this.NewZoneValueHash[this.CurrentZoneKey].ToString();
 		}
 
-		private void OnCancelButtonClick(object P_0, EventArgs P_1)
+		private void OnCancelButtonClick(object sender, EventArgs args)
 		{
-			this.ZoneIndex = 1000;
+			this.CurrentZoneIndex = 1000;
 			this.ButtonReadNac.Enabled = true;
 			this.ButtonCalibration.Enabled = true;
 			this.SendProgressBar.Value = 0;
@@ -1459,12 +1541,12 @@ namespace PSA_Arduino_NAC
 			this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 		}
 
-		private void OnButtonBackupClick(object P_0, EventArgs P_1)
+		private void OnButtonBackupClick(object sender, EventArgs args)
         {
             string zoneValueFlatList = "";
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                DefaultExt = ".sav",
+                DefaultExt = ".nac",
                 Filter = "PSA-Arduino-NAC sav (*.nac) | *.nac"
             };
 
@@ -1509,10 +1591,10 @@ namespace PSA_Arduino_NAC
 			}
         }
 
-        private void OnRestoreButtonClick(object P_0, EventArgs P_1)
+        private void OnRestoreButtonClick(object sender, EventArgs args)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.DefaultExt = ".sav";
+            openFileDialog.DefaultExt = ".nac";
             openFileDialog.Multiselect = false;
             openFileDialog.Filter = "PSA-Arduino-NAC sav (*.nac) | *.nac";
 
@@ -1521,7 +1603,7 @@ namespace PSA_Arduino_NAC
                 return;
             }
 
-            this.ZoneValueHash.Clear();
+            this.NewZoneValueHash.Clear();
             this.ZonesKeyDescriptionFlatList.Clear();
 
             using (StreamReader streamReader = new StreamReader(openFileDialog.FileName))
@@ -1529,25 +1611,27 @@ namespace PSA_Arduino_NAC
                 string backupFileLine;
                 while ((backupFileLine = streamReader.ReadLine()) != null)
                 {
-                    string[] zone = backupFileLine.Trim().Split('=');
-                    string zoneKey = zone[0];
-                    string zoneValue = zone[1];
-                    if (zoneKey != "F18C" && zoneValue != "")
+                    string[] zoneKeyValue = backupFileLine.Trim().Split('=');
+                    string zoneKey = zoneKeyValue[0];
+                    string zoneValue = zoneKeyValue[1];
+
+					// F18C	Serial number
+					if (zoneKey != "F18C" && zoneValue != "")
                     {
                         this.ZonesKeyDescriptionFlatList.Add(zoneKey);
-                        this.ZoneValueHash.Add(zoneKey, zoneValue);
+                        this.NewZoneValueHash.Add(zoneKey, zoneValue);
                     }
                 }
             }
 
             this.isConnected = true;
-            this.ZoneIndex = 0;
+            this.CurrentZoneIndex = 0;
             JContainer zonesJson = (JContainer)this.JsonObject["NAC"]["zones"];
-            this.SendProgressBar.Maximum = this.ZoneValueHash.Count;
+            this.SendProgressBar.Maximum = this.NewZoneValueHash.Count;
             this.SendProgressBar.Value = 0;
             this.LabelNac.Text = "0/" + this.SendProgressBar.Maximum;
-            this.ZoneKeyInt = this.ZonesKeyDescriptionFlatList[this.ZoneIndex].ToString();
-            this.LabelStatus.Text = this.ZoneKeyInt + ": " + zonesJson[this.ZoneKeyInt]["name"].ToString();
+            this.CurrentZoneKey = this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString();
+            this.LabelStatus.Text = this.CurrentZoneKey + ": " + zonesJson[this.CurrentZoneKey]["name"].ToString();
             this.ButtonCancel.Enabled = true;
             this.ButtonBackup.Enabled = false;
             this.ButtonRestore.Enabled = false;
@@ -1557,7 +1641,7 @@ namespace PSA_Arduino_NAC
             this.IsConfLocked = true;
 
 			// 2EXXXXYYYYYYYYYYYY	Write Zone XXXX with data YYYYYYYYYYYY (Unit must be unlocked first)
-			this.nextCommand = "2E" + this.ZoneKeyInt + this.ZoneValueHash[this.ZoneKeyInt].ToString();
+			this.nextCommand = "2E" + this.CurrentZoneKey + this.NewZoneValueHash[this.CurrentZoneKey].ToString();
         }
 
         private void Send(string data)
@@ -1696,6 +1780,7 @@ namespace PSA_Arduino_NAC
 			this.SendProgressBar = new ProgressBar();
 			this.LabelNac = new Label();
 			this.ButtonParams = new Button();
+			this.ButtonOfflineEditor = new Button();
 			this.ButtonCancel = new Button();
 			this.ButtonCalibration = new Button();
 			this.LabelCalibrationFileName = new Label();
@@ -1723,7 +1808,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonSend.Text = "Send";
 			this.ButtonSend.UseVisualStyleBackColor = true;
 			this.ButtonSend.Visible = false;
-			this.ButtonSend.Click += OnButtonSendClick;
+			this.ButtonSend.Click += new System.EventHandler(OnButtonSendClick);
 
 			// textbox log
 			this.TextBoxLog.Location = new Point(274, 327);
@@ -1741,7 +1826,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonSerial.TabIndex = 3;
 			this.ButtonSerial.Text = "Arduino Connect";
 			this.ButtonSerial.UseVisualStyleBackColor = true;
-			this.ButtonSerial.Click += OnButtonSerialClick;
+			this.ButtonSerial.Click += new System.EventHandler(OnButtonSerialClick);
 
 			// button nac
 			this.ButtonNac.Enabled = false;
@@ -1751,7 +1836,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonNac.TabIndex = 4;
 			this.ButtonNac.Text = "NAC/RCC Access";
 			this.ButtonNac.UseVisualStyleBackColor = true;
-			this.ButtonNac.Click += OnButtonReadNacClick;
+			this.ButtonNac.Click += new System.EventHandler(OnButtonReadNacClick);
 
 			this.ButtonReadNac.Enabled = false;
 			this.ButtonReadNac.Location = new Point(14, 103);
@@ -1760,7 +1845,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonReadNac.TabIndex = 5;
 			this.ButtonReadNac.Text = "Read Parameters";
 			this.ButtonReadNac.UseVisualStyleBackColor = true;
-			this.ButtonReadNac.Click += OnReadNacButtonClick;
+			this.ButtonReadNac.Click += new System.EventHandler(OnReadNacButtonClick);
 
 			// Label status
 			this.LabelStatus.Location = new Point(14, 177);
@@ -1790,7 +1875,16 @@ namespace PSA_Arduino_NAC
 			this.ButtonParams.TabIndex = 9;
 			this.ButtonParams.Text = "Parameters";
 			this.ButtonParams.UseVisualStyleBackColor = true;
-			this.ButtonParams.Click += OnButtonParamsClick;
+			this.ButtonParams.Click += new System.EventHandler(OnButtonParamsClick);
+
+			// offline editor
+			this.ButtonOfflineEditor.Location = new Point(449, 150);
+			this.ButtonOfflineEditor.Name = "buttonOfflineEditor";
+			this.ButtonOfflineEditor.Size = new Size(150, 23);
+			this.ButtonOfflineEditor.TabIndex = 14;
+			this.ButtonOfflineEditor.Text = "Backup file Editor";
+			this.ButtonOfflineEditor.UseVisualStyleBackColor = true;
+			this.ButtonOfflineEditor.Click += new System.EventHandler(OnButtonOfflineEditorClick);
 
 			this.ButtonCancel.Enabled = false;
 			this.ButtonCancel.Location = new Point(449, 46);
@@ -1800,7 +1894,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonCancel.TabIndex = 10;
 			this.ButtonCancel.Text = "Cancel";
 			this.ButtonCancel.UseVisualStyleBackColor = true;
-			this.ButtonCancel.Click += OnCancelButtonClick;
+			this.ButtonCancel.Click += new System.EventHandler(OnCancelButtonClick);
 
 			this.ButtonCalibration.Enabled = false;
 			this.ButtonCalibration.Location = new Point(14, 75);
@@ -1810,7 +1904,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonCalibration.TabIndex = 11;
 			this.ButtonCalibration.Text = "Calibration Upload";
 			this.ButtonCalibration.UseVisualStyleBackColor = true;
-			this.ButtonCalibration.Click += OnButtonCalibrationUploadClick;
+			this.ButtonCalibration.Click += new System.EventHandler(OnButtonCalibrationUploadClick);
 
 			// Label calibration
 			this.LabelCalibrationFileName.Location = new Point(178, 79);
@@ -1837,7 +1931,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonBackup.TabIndex = 14;
 			this.ButtonBackup.Text = "Backup Parameters";
 			this.ButtonBackup.UseVisualStyleBackColor = true;
-			this.ButtonBackup.Click += OnButtonBackupClick;
+			this.ButtonBackup.Click += new System.EventHandler(OnButtonBackupClick);
 
 			// restore
 			this.ButtonRestore.Enabled = false;
@@ -1848,7 +1942,7 @@ namespace PSA_Arduino_NAC
 			this.ButtonRestore.TabIndex = 15;
 			this.ButtonRestore.Text = "Restore Parameters";
 			this.ButtonRestore.UseVisualStyleBackColor = true;
-			this.ButtonRestore.Click += OnRestoreButtonClick;
+			this.ButtonRestore.Click += new System.EventHandler(OnRestoreButtonClick);
 
 			this.LabelCalibrationId.Location = new Point(178, 106);
 			this.LabelCalibrationId.Margin = new Padding(2, 0, 2, 0);
@@ -1893,6 +1987,7 @@ namespace PSA_Arduino_NAC
 			base.Controls.Add(this.ComboBoxCom);
 			base.Controls.Add(this.ButtonCancel);
 			base.Controls.Add(this.ButtonParams);
+			base.Controls.Add(this.ButtonOfflineEditor);
 			base.Controls.Add(this.ButtonNac);
 			base.Controls.Add(this.VersionLabel);
 			base.Controls.Add(this.ButtonSerial);
