@@ -26,7 +26,7 @@ namespace PSA_Arduino_NAC
 
 		// private string AppPath = Application.StartupPath; 
 
-		private string NacFile = "Default.nac"; 
+		private string NacFile = "default.nac"; 
 
 		// private string FullParamFilename = "full_param.json";
 
@@ -738,7 +738,7 @@ namespace PSA_Arduino_NAC
 			unprocessedData += rcvData;
 
 			// Empty response
-			if (!rcvData.Contains("\n") || rcvData.Length == 0)
+			if (!rcvData.Contains("\r") || rcvData.Length == 0)
 			{
 				return;
 			}
@@ -748,7 +748,7 @@ namespace PSA_Arduino_NAC
 			// Log received data
 			try
 			{
-				File.AppendAllText(this.LogFilePath, "< " + unprocessedData + "\n");
+				File.AppendAllText(this.LogFilePath, "< " + unprocessedData + "\n\n");
 			}
 			catch (IOException)
 			{
@@ -1024,7 +1024,7 @@ namespace PSA_Arduino_NAC
 			{
 				if (rcvData.StartsWith("6703")) // 6703XXXXXXXX Seed generated for configuration - XXXXXXXX = SEED
 				{
-					string ecuSeed = rcvData.Substring(4).Trim('\n');
+					string ecuSeed = rcvData.Substring(4).Trim('\r');
 					string ecuKey = SeedKeyGenerator.getKey(ecuSeed, this.EcuCurrentKey);
 					
 					if (ecuKey != "")
@@ -1055,7 +1055,7 @@ namespace PSA_Arduino_NAC
 				}
 				else if (rcvData.StartsWith("6701")) // 6701XXXXXXXX	Seed generated for download - XXXXXXXX = SEED
 				{
-					string ecuSeed = rcvData.Substring(4).Trim('\n');
+					string ecuSeed = rcvData.Substring(4).Trim('\r');
 					string ecuKey = SeedKeyGenerator.getKey(ecuSeed, this.EcuCurrentKey);
 
 					if (ecuKey != "")
@@ -1293,7 +1293,7 @@ namespace PSA_Arduino_NAC
 				{
 					this.retryCount = 0;
 					currentZoneValueStart = rcvData.IndexOf(currentZoneKey) + 4;
-					int currentZoneValueEnd = rcvData.IndexOf("\n", currentZoneValueStart);
+					int currentZoneValueEnd = rcvData.IndexOf("\r", currentZoneValueStart);
 					string currentZoneValue = rcvData.Substring(currentZoneValueStart, currentZoneValueEnd - currentZoneValueStart).Trim();
 					
 					Invoke((Action)delegate
@@ -1303,8 +1303,8 @@ namespace PSA_Arduino_NAC
 						this.LabelNac.Text = this.SendProgressBar.Value + "/" + this.SendProgressBar.Maximum;
 					});
 
-					// write value to json
-					this.JsonObject[currentZoneKey] = currentZoneValue;
+					// write value current nac config
+					this.NacZoneValueHash[currentZoneKey] = currentZoneValue;
 
 					YieldZoneReading();
 				}
