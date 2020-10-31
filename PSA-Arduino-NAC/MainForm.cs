@@ -365,8 +365,6 @@ namespace PSA_Arduino_NAC
         3960
         };
 
-        private LinkLabel LinkLabelTuto;
-
         private Label VersionLabel;
 
         private Label LabelCalibrationFileName;
@@ -1768,243 +1766,259 @@ namespace PSA_Arduino_NAC
 
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-
-            this.TextBoxSend = new TextBox();
-            this.ButtonSend = new Button();
-            this.TextBoxLog = new TextBox();
-            this.ButtonSerial = new Button();
-            this.ButtonNac = new Button();
-            this.ButtonReadNac = new Button();
-            this.LabelStatus = new Label();
-            this.SendProgressBar = new ProgressBar();
-            this.LabelNac = new Label();
-            this.ButtonParams = new Button();
-            this.ButtonOfflineEditor = new Button();
-            this.ButtonCancel = new Button();
-            this.ButtonCalibration = new Button();
-            this.LabelCalibrationFileName = new Label();
-            this.ComboBoxCom = new ComboBox();
-            this.ButtonBackup = new Button();
-            this.ButtonRestore = new Button();
-            this.LabelCalibrationId = new Label();
-            this.VersionLabel = new Label();
-            this.LinkLabelTuto = new LinkLabel();
-            SuspendLayout();
-
-            // textbox send
-            this.TextBoxSend.Location = new Point(207, 303);
-            this.TextBoxSend.Name = "textBox1";
-            this.TextBoxSend.Size = new Size(317, 20);
-            this.TextBoxSend.TabIndex = 0;
-            this.TextBoxSend.Visible = true;
+            this.TextBoxSend = new System.Windows.Forms.TextBox();
+            this.ButtonSend = new System.Windows.Forms.Button();
+            this.TextBoxLog = new System.Windows.Forms.TextBox();
+            this.ButtonSerial = new System.Windows.Forms.Button();
+            this.ButtonNac = new System.Windows.Forms.Button();
+            this.ButtonReadNac = new System.Windows.Forms.Button();
+            this.LabelStatus = new System.Windows.Forms.Label();
+            this.SendProgressBar = new System.Windows.Forms.ProgressBar();
+            this.LabelNac = new System.Windows.Forms.Label();
+            this.ButtonParams = new System.Windows.Forms.Button();
+            this.ButtonOfflineEditor = new System.Windows.Forms.Button();
+            this.ButtonCancel = new System.Windows.Forms.Button();
+            this.ButtonCalibration = new System.Windows.Forms.Button();
+            this.LabelCalibrationFileName = new System.Windows.Forms.Label();
+            this.ComboBoxCom = new System.Windows.Forms.ComboBox();
+            this.ButtonBackup = new System.Windows.Forms.Button();
+            this.ButtonRestore = new System.Windows.Forms.Button();
+            this.LabelCalibrationId = new System.Windows.Forms.Label();
+            this.VersionLabel = new System.Windows.Forms.Label();
+            this.SuspendLayout();
+            // 
+            // TextBoxSend
+            // 
             this.TextBoxSend.Enabled = false;
-
-            // button send
-            this.ButtonSend.Location = new Point(529, 298);
-            this.ButtonSend.Name = "buttonSend";
-            this.ButtonSend.Size = new Size(75, 23);
+            this.TextBoxSend.Location = new System.Drawing.Point(276, 373);
+            this.TextBoxSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TextBoxSend.Name = "TextBoxSend";
+            this.TextBoxSend.Size = new System.Drawing.Size(421, 22);
+            this.TextBoxSend.TabIndex = 0;
+            // 
+            // ButtonSend
+            // 
+            this.ButtonSend.Location = new System.Drawing.Point(705, 367);
+            this.ButtonSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonSend.Name = "ButtonSend";
+            this.ButtonSend.Size = new System.Drawing.Size(100, 28);
             this.ButtonSend.TabIndex = 1;
             this.ButtonSend.Text = "Send";
             this.ButtonSend.UseVisualStyleBackColor = true;
             this.ButtonSend.Visible = false;
-            this.ButtonSend.Click += new System.EventHandler(OnButtonSendClick);
-
-            // textbox log
-            this.TextBoxLog.Location = new Point(274, 327);
+            this.ButtonSend.Click += new System.EventHandler(this.OnButtonSendClick);
+            // 
+            // TextBoxLog
+            // 
+            this.TextBoxLog.Location = new System.Drawing.Point(365, 402);
+            this.TextBoxLog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TextBoxLog.Multiline = true;
-            this.TextBoxLog.Name = "textBoxLog";
-            this.TextBoxLog.ScrollBars = ScrollBars.Vertical;
-            this.TextBoxLog.Size = new Size(582, 105);
+            this.TextBoxLog.Name = "TextBoxLog";
+            this.TextBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TextBoxLog.Size = new System.Drawing.Size(775, 128);
             this.TextBoxLog.TabIndex = 2;
             this.TextBoxLog.Visible = false;
-
-            // Arduino connect button
-            this.ButtonSerial.Location = new Point(123, 17);
-            this.ButtonSerial.Name = "buttonSerial";
-            this.ButtonSerial.Size = new Size(150, 23);
+            // 
+            // ButtonSerial
+            // 
+            this.ButtonSerial.Location = new System.Drawing.Point(164, 21);
+            this.ButtonSerial.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonSerial.Name = "ButtonSerial";
+            this.ButtonSerial.Size = new System.Drawing.Size(200, 28);
             this.ButtonSerial.TabIndex = 3;
             this.ButtonSerial.Text = "Arduino Connect";
             this.ButtonSerial.UseVisualStyleBackColor = true;
-            this.ButtonSerial.Click += new System.EventHandler(OnButtonSerialClick);
-
-            // button nac
+            this.ButtonSerial.Click += new System.EventHandler(this.OnButtonSerialClick);
+            // 
+            // ButtonNac
+            // 
             this.ButtonNac.Enabled = false;
-            this.ButtonNac.Location = new Point(14, 46);
-            this.ButtonNac.Name = "buttonNAC";
-            this.ButtonNac.Size = new Size(150, 23);
+            this.ButtonNac.Location = new System.Drawing.Point(19, 57);
+            this.ButtonNac.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonNac.Name = "ButtonNac";
+            this.ButtonNac.Size = new System.Drawing.Size(200, 28);
             this.ButtonNac.TabIndex = 4;
             this.ButtonNac.Text = "NAC/RCC Access";
             this.ButtonNac.UseVisualStyleBackColor = true;
-            this.ButtonNac.Click += new System.EventHandler(OnButtonReadNacClick);
-
+            this.ButtonNac.Click += new System.EventHandler(this.OnButtonReadNacClick);
+            // 
+            // ButtonReadNac
+            // 
             this.ButtonReadNac.Enabled = false;
-            this.ButtonReadNac.Location = new Point(14, 103);
-            this.ButtonReadNac.Name = "buttonReadNAC";
-            this.ButtonReadNac.Size = new Size(150, 23);
+            this.ButtonReadNac.Location = new System.Drawing.Point(19, 127);
+            this.ButtonReadNac.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonReadNac.Name = "ButtonReadNac";
+            this.ButtonReadNac.Size = new System.Drawing.Size(200, 28);
             this.ButtonReadNac.TabIndex = 5;
             this.ButtonReadNac.Text = "Read Parameters";
             this.ButtonReadNac.UseVisualStyleBackColor = true;
-            this.ButtonReadNac.Click += new System.EventHandler(OnReadNacButtonClick);
-
-            // Label status
-            this.LabelStatus.Location = new Point(14, 177);
-            this.LabelStatus.Name = "label1";
-            this.LabelStatus.Size = new Size(366, 23);
+            this.ButtonReadNac.Click += new System.EventHandler(this.OnReadNacButtonClick);
+            // 
+            // LabelStatus
+            // 
+            this.LabelStatus.Location = new System.Drawing.Point(19, 218);
+            this.LabelStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LabelStatus.Name = "LabelStatus";
+            this.LabelStatus.Size = new System.Drawing.Size(488, 28);
             this.LabelStatus.TabIndex = 6;
-
-            this.SendProgressBar.Location = new Point(14, 203);
-            this.SendProgressBar.Name = "progressBar1";
-            this.SendProgressBar.Size = new Size(502, 23);
+            // 
+            // SendProgressBar
+            // 
+            this.SendProgressBar.Location = new System.Drawing.Point(19, 250);
+            this.SendProgressBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SendProgressBar.Name = "SendProgressBar";
+            this.SendProgressBar.Size = new System.Drawing.Size(669, 28);
             this.SendProgressBar.Step = 1;
-            this.SendProgressBar.Style = ProgressBarStyle.Continuous;
+            this.SendProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.SendProgressBar.TabIndex = 7;
-
-            // Label nac
-            this.LabelNac.Location = new Point(520, 203);
-            this.LabelNac.Name = "label2";
-            this.LabelNac.Size = new Size(80, 23);
+            // 
+            // LabelNac
+            // 
+            this.LabelNac.Location = new System.Drawing.Point(693, 250);
+            this.LabelNac.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LabelNac.Name = "LabelNac";
+            this.LabelNac.Size = new System.Drawing.Size(107, 28);
             this.LabelNac.TabIndex = 8;
-            this.LabelNac.TextAlign = ContentAlignment.MiddleLeft;
-
-            // Button main param
+            this.LabelNac.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // ButtonParams
+            // 
             this.ButtonParams.Enabled = false;
-            this.ButtonParams.Location = new Point(449, 17);
-            this.ButtonParams.Name = "buttonMainParam";
-            this.ButtonParams.Size = new Size(150, 23);
+            this.ButtonParams.Location = new System.Drawing.Point(599, 21);
+            this.ButtonParams.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonParams.Name = "ButtonParams";
+            this.ButtonParams.Size = new System.Drawing.Size(200, 28);
             this.ButtonParams.TabIndex = 9;
             this.ButtonParams.Text = "Parameters";
             this.ButtonParams.UseVisualStyleBackColor = true;
-            this.ButtonParams.Click += new System.EventHandler(OnButtonParamsClick);
-
-            // offline editor
-            this.ButtonOfflineEditor.Location = new Point(449, 150);
-            this.ButtonOfflineEditor.Name = "buttonOfflineEditor";
-            this.ButtonOfflineEditor.Size = new Size(150, 23);
+            this.ButtonParams.Click += new System.EventHandler(this.OnButtonParamsClick);
+            // 
+            // ButtonOfflineEditor
+            // 
+            this.ButtonOfflineEditor.Location = new System.Drawing.Point(599, 185);
+            this.ButtonOfflineEditor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonOfflineEditor.Name = "ButtonOfflineEditor";
+            this.ButtonOfflineEditor.Size = new System.Drawing.Size(200, 28);
             this.ButtonOfflineEditor.TabIndex = 14;
             this.ButtonOfflineEditor.Text = "Backup file Editor";
             this.ButtonOfflineEditor.UseVisualStyleBackColor = true;
-            this.ButtonOfflineEditor.Click += new System.EventHandler(OnButtonOfflineEditorClick);
-
+            this.ButtonOfflineEditor.Click += new System.EventHandler(this.OnButtonOfflineEditorClick);
+            // 
+            // ButtonCancel
+            // 
             this.ButtonCancel.Enabled = false;
-            this.ButtonCancel.Location = new Point(449, 46);
-            this.ButtonCancel.Margin = new Padding(2);
-            this.ButtonCancel.Name = "buttonCancel";
-            this.ButtonCancel.Size = new Size(150, 23);
+            this.ButtonCancel.Location = new System.Drawing.Point(599, 57);
+            this.ButtonCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ButtonCancel.Name = "ButtonCancel";
+            this.ButtonCancel.Size = new System.Drawing.Size(200, 28);
             this.ButtonCancel.TabIndex = 10;
             this.ButtonCancel.Text = "Cancel";
             this.ButtonCancel.UseVisualStyleBackColor = true;
-            this.ButtonCancel.Click += new System.EventHandler(OnCancelButtonClick);
-
+            this.ButtonCancel.Click += new System.EventHandler(this.OnCancelButtonClick);
+            // 
+            // ButtonCalibration
+            // 
             this.ButtonCalibration.Enabled = false;
-            this.ButtonCalibration.Location = new Point(14, 75);
-            this.ButtonCalibration.Margin = new Padding(2);
-            this.ButtonCalibration.Name = "buttonCalFil";
-            this.ButtonCalibration.Size = new Size(150, 23);
+            this.ButtonCalibration.Location = new System.Drawing.Point(19, 92);
+            this.ButtonCalibration.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ButtonCalibration.Name = "ButtonCalibration";
+            this.ButtonCalibration.Size = new System.Drawing.Size(200, 28);
             this.ButtonCalibration.TabIndex = 11;
             this.ButtonCalibration.Text = "Calibration Upload";
             this.ButtonCalibration.UseVisualStyleBackColor = true;
-            this.ButtonCalibration.Click += new System.EventHandler(OnButtonCalibrationUploadClick);
-
-            // Label calibration
-            this.LabelCalibrationFileName.Location = new Point(178, 79);
-            this.LabelCalibrationFileName.Margin = new Padding(2, 0, 2, 0);
-            this.LabelCalibrationFileName.Name = "labelCal";
-            this.LabelCalibrationFileName.Size = new Size(219, 19);
+            this.ButtonCalibration.Click += new System.EventHandler(this.OnButtonCalibrationUploadClick);
+            // 
+            // LabelCalibrationFileName
+            // 
+            this.LabelCalibrationFileName.Location = new System.Drawing.Point(237, 97);
+            this.LabelCalibrationFileName.Name = "LabelCalibrationFileName";
+            this.LabelCalibrationFileName.Size = new System.Drawing.Size(292, 23);
             this.LabelCalibrationFileName.TabIndex = 12;
-
-            // combo box com port
-            this.ComboBoxCom.DropDownStyle = ComboBoxStyle.DropDownList;
-            this.ComboBoxCom.FlatStyle = FlatStyle.System;
+            // 
+            // ComboBoxCom
+            // 
+            this.ComboBoxCom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ComboBoxCom.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.ComboBoxCom.FormattingEnabled = true;
-            this.ComboBoxCom.Location = new Point(14, 17);
-            this.ComboBoxCom.Name = "comboBoxCom";
-            this.ComboBoxCom.Size = new Size(103, 21);
+            this.ComboBoxCom.Location = new System.Drawing.Point(19, 21);
+            this.ComboBoxCom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ComboBoxCom.Name = "ComboBoxCom";
+            this.ComboBoxCom.Size = new System.Drawing.Size(136, 24);
             this.ComboBoxCom.TabIndex = 13;
-
-            // button backup
+            // 
+            // ButtonBackup
+            // 
             this.ButtonBackup.Enabled = false;
-            this.ButtonBackup.Location = new Point(449, 75);
-            this.ButtonBackup.Margin = new Padding(2);
-            this.ButtonBackup.Name = "buttonBackup";
-            this.ButtonBackup.Size = new Size(150, 23);
+            this.ButtonBackup.Location = new System.Drawing.Point(599, 92);
+            this.ButtonBackup.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ButtonBackup.Name = "ButtonBackup";
+            this.ButtonBackup.Size = new System.Drawing.Size(200, 28);
             this.ButtonBackup.TabIndex = 14;
             this.ButtonBackup.Text = "Backup Parameters";
             this.ButtonBackup.UseVisualStyleBackColor = true;
-            this.ButtonBackup.Click += new System.EventHandler(OnButtonBackupClick);
-
-            // restore
+            this.ButtonBackup.Click += new System.EventHandler(this.OnButtonBackupClick);
+            // 
+            // ButtonRestore
+            // 
             this.ButtonRestore.Enabled = false;
-            this.ButtonRestore.Location = new Point(449, 102);
-            this.ButtonRestore.Margin = new Padding(2);
-            this.ButtonRestore.Name = "buttonRestore";
-            this.ButtonRestore.Size = new Size(150, 23);
+            this.ButtonRestore.Location = new System.Drawing.Point(599, 126);
+            this.ButtonRestore.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.ButtonRestore.Name = "ButtonRestore";
+            this.ButtonRestore.Size = new System.Drawing.Size(200, 28);
             this.ButtonRestore.TabIndex = 15;
             this.ButtonRestore.Text = "Restore Parameters";
             this.ButtonRestore.UseVisualStyleBackColor = true;
-            this.ButtonRestore.Click += new System.EventHandler(OnRestoreButtonClick);
-
-            this.LabelCalibrationId.Location = new Point(178, 106);
-            this.LabelCalibrationId.Margin = new Padding(2, 0, 2, 0);
-            this.LabelCalibrationId.Name = "label3";
-            this.LabelCalibrationId.Size = new Size(219, 19);
+            this.ButtonRestore.Click += new System.EventHandler(this.OnRestoreButtonClick);
+            // 
+            // LabelCalibrationId
+            // 
+            this.LabelCalibrationId.Location = new System.Drawing.Point(237, 130);
+            this.LabelCalibrationId.Name = "LabelCalibrationId";
+            this.LabelCalibrationId.Size = new System.Drawing.Size(292, 23);
             this.LabelCalibrationId.TabIndex = 16;
-            this.LabelCalibrationId.TextAlign = ContentAlignment.MiddleLeft;
-
-            // version label
-            this.VersionLabel.Location = new Point(14, 242);
-            this.VersionLabel.Margin = new Padding(2, 0, 2, 0);
-            this.VersionLabel.Name = "label5";
-            this.VersionLabel.Size = new Size(195, 19);
+            this.LabelCalibrationId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // VersionLabel
+            // 
+            this.VersionLabel.Location = new System.Drawing.Point(19, 298);
+            this.VersionLabel.Name = "VersionLabel";
+            this.VersionLabel.Size = new System.Drawing.Size(260, 23);
             this.VersionLabel.TabIndex = 18;
             this.VersionLabel.Text = "Version: ";
-            this.VersionLabel.TextAlign = ContentAlignment.MiddleLeft;
+            this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(816, 330);
+            this.Controls.Add(this.ButtonCalibration);
+            this.Controls.Add(this.SendProgressBar);
+            this.Controls.Add(this.ButtonReadNac);
+            this.Controls.Add(this.ButtonRestore);
+            this.Controls.Add(this.ButtonBackup);
+            this.Controls.Add(this.TextBoxLog);
+            this.Controls.Add(this.TextBoxSend);
+            this.Controls.Add(this.ComboBoxCom);
+            this.Controls.Add(this.ButtonCancel);
+            this.Controls.Add(this.ButtonParams);
+            this.Controls.Add(this.ButtonOfflineEditor);
+            this.Controls.Add(this.ButtonNac);
+            this.Controls.Add(this.VersionLabel);
+            this.Controls.Add(this.ButtonSerial);
+            this.Controls.Add(this.LabelCalibrationId);
+            this.Controls.Add(this.LabelNac);
+            this.Controls.Add(this.LabelStatus);
+            this.Controls.Add(this.LabelCalibrationFileName);
+            this.Controls.Add(this.ButtonSend);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(834, 377);
+            this.Name = "MainForm";
+            this.Text = "PSA-Arduino-NAC/RCC";
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
-            // link to tuto
-            this.LinkLabelTuto.Location = new Point(202, 242);
-            this.LinkLabelTuto.Margin = new Padding(2, 0, 2, 0);
-            this.LinkLabelTuto.Name = "linkLabel1";
-            this.LinkLabelTuto.Size = new Size(398, 19);
-            this.LinkLabelTuto.TabIndex = 19;
-            this.LinkLabelTuto.TabStop = true;
-            this.LinkLabelTuto.Text = "[FP] Télécodage et calibration d'un NAC ou RCC SANS Diagbox via Arduino";
-            this.LinkLabelTuto.TextAlign = ContentAlignment.MiddleRight;
-            this.LinkLabelTuto.LinkClicked += OnLinkLabelClick;
-            this.LinkLabelTuto.LinkBehavior = LinkBehavior.AlwaysUnderline;
-            this.LinkLabelTuto.LinkColor = SystemColors.Highlight;
-
-            base.AutoScaleDimensions = new SizeF(6f, 13f);
-            base.AutoScaleMode = AutoScaleMode.Font;
-            base.ClientSize = new Size(613, 270);
-
-            base.Controls.Add(this.ButtonCalibration);
-            base.Controls.Add(this.SendProgressBar);
-            base.Controls.Add(this.ButtonReadNac);
-            base.Controls.Add(this.ButtonRestore);
-            base.Controls.Add(this.ButtonBackup);
-            base.Controls.Add(this.TextBoxLog);
-            base.Controls.Add(this.TextBoxSend);
-            base.Controls.Add(this.ComboBoxCom);
-            base.Controls.Add(this.ButtonCancel);
-            base.Controls.Add(this.ButtonParams);
-            base.Controls.Add(this.ButtonOfflineEditor);
-            base.Controls.Add(this.ButtonNac);
-            base.Controls.Add(this.VersionLabel);
-            base.Controls.Add(this.ButtonSerial);
-            base.Controls.Add(this.LabelCalibrationId);
-            base.Controls.Add(this.LabelNac);
-            base.Controls.Add(this.LabelStatus);
-            base.Controls.Add(this.LinkLabelTuto);
-            base.Controls.Add(this.LabelCalibrationFileName);
-            base.Controls.Add(this.ButtonSend);
-
-            base.MaximizeBox = false;
-            MaximumSize = new Size(630, 315);
-            base.Name = "MainForm";
-            Text = "PSA-Arduino-NAC/RCC";
-            base.FormClosing += OnFormClosing;
-            ResumeLayout(false);
-            PerformLayout();
         }
     }
 }

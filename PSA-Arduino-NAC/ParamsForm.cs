@@ -45,7 +45,6 @@ namespace PSA_Arduino_NAC
         private Label Label2;
 
         private TabPage TabPage1;
-
         private TabControl TabControl1;
 
         public static void ReloadBuffer(Control P_0)
@@ -360,7 +359,7 @@ namespace PSA_Arduino_NAC
                                         TabIndex = 5,
                                         UseVisualStyleBackColor = true,
                                     };
-                                    checkBox.CheckedChanged += OnCheckboxChanged;
+                                    checkBox.CheckedChanged += new System.EventHandler(OnCheckboxChanged);
 
 
                                     tabPage.Controls.Add(checkBox);
@@ -777,178 +776,204 @@ namespace PSA_Arduino_NAC
 
         private void InitializeComponent()
         {
-            this.components = new Container();
-
-            this.SplitContainer1 = new SplitContainer();
-            this.TabControl1 = new TabControl();
-            this.TabPage1 = new TabPage();
-            Label1 = new Label();
-            Label2 = new Label();
-            this.TextBoxBtName = new TextBox();
-            this.LabelBtName = new Label();
-            this.TextBoxSN = new TextBox();
-            this.TextBoxVin = new TextBox();
-            this.LabelNacSerial = new Label();
-            this.LabelVin = new Label();
-            this.ButtonSave = new Button();
-            this.ButtonCancel = new Button();
-
-            ((ISupportInitialize)this.SplitContainer1).BeginInit();
-
+            this.SplitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.TabControl1 = new System.Windows.Forms.TabControl();
+            this.TabPage1 = new System.Windows.Forms.TabPage();
+            this.Label1 = new System.Windows.Forms.Label();
+            this.Label2 = new System.Windows.Forms.Label();
+            this.TextBoxBtName = new System.Windows.Forms.TextBox();
+            this.LabelBtName = new System.Windows.Forms.Label();
+            this.TextBoxSN = new System.Windows.Forms.TextBox();
+            this.TextBoxVin = new System.Windows.Forms.TextBox();
+            this.LabelNacSerial = new System.Windows.Forms.Label();
+            this.LabelVin = new System.Windows.Forms.Label();
+            this.ButtonSave = new System.Windows.Forms.Button();
+            this.ButtonCancel = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.SplitContainer1)).BeginInit();
             this.SplitContainer1.Panel1.SuspendLayout();
             this.SplitContainer1.Panel2.SuspendLayout();
             this.SplitContainer1.SuspendLayout();
             this.TabControl1.SuspendLayout();
             this.TabPage1.SuspendLayout();
-
-            SuspendLayout();
-
-            this.SplitContainer1.Dock = DockStyle.Fill;
-            this.SplitContainer1.FixedPanel = FixedPanel.Panel2;
+            this.SuspendLayout();
+            // 
+            // SplitContainer1
+            // 
+            this.SplitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.SplitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.SplitContainer1.IsSplitterFixed = true;
-            this.SplitContainer1.Location = new Point(0, 0);
-            this.SplitContainer1.Margin = new Padding(4);
-            this.SplitContainer1.Name = "splitContainer1";
-            this.SplitContainer1.Orientation = Orientation.Horizontal;
+            this.SplitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.SplitContainer1.Margin = new System.Windows.Forms.Padding(4);
+            this.SplitContainer1.Name = "SplitContainer1";
+            this.SplitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // SplitContainer1.Panel1
+            // 
             this.SplitContainer1.Panel1.AutoScroll = true;
             this.SplitContainer1.Panel1.Controls.Add(this.TabControl1);
+            // 
+            // SplitContainer1.Panel2
+            // 
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonSave);
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonCancel);
-            this.SplitContainer1.Size = new Size(1209, 810);
-            this.SplitContainer1.SplitterDistance = 753;
+            this.SplitContainer1.Size = new System.Drawing.Size(1209, 810);
+            this.SplitContainer1.SplitterDistance = 752;
             this.SplitContainer1.SplitterWidth = 5;
             this.SplitContainer1.TabIndex = 0;
-
+            // 
+            // TabControl1
+            // 
             this.TabControl1.Controls.Add(this.TabPage1);
-            this.TabControl1.Dock = DockStyle.Fill;
-            this.TabControl1.Location = new Point(0, 0);
+            this.TabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TabControl1.Location = new System.Drawing.Point(0, 0);
             this.TabControl1.Multiline = true;
-            this.TabControl1.Name = "tabControl1";
-            this.TabControl1.RightToLeft = RightToLeft.No;
+            this.TabControl1.Name = "TabControl1";
+            this.TabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new Size(1209, 753);
+            this.TabControl1.Size = new System.Drawing.Size(1209, 752);
             this.TabControl1.TabIndex = 13;
-
+            // 
+            // TabPage1
+            // 
             this.TabPage1.AutoScroll = true;
-            this.TabPage1.BackColor = SystemColors.Control;
-            this.TabPage1.Controls.Add(Label1);
-            this.TabPage1.Controls.Add(Label2);
+            this.TabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.TabPage1.Controls.Add(this.Label1);
+            this.TabPage1.Controls.Add(this.Label2);
             this.TabPage1.Controls.Add(this.TextBoxBtName);
             this.TabPage1.Controls.Add(this.LabelBtName);
             this.TabPage1.Controls.Add(this.TextBoxSN);
             this.TabPage1.Controls.Add(this.TextBoxVin);
             this.TabPage1.Controls.Add(this.LabelNacSerial);
             this.TabPage1.Controls.Add(this.LabelVin);
-            this.TabPage1.Location = new Point(4, 25);
-            this.TabPage1.Name = "tabPage1";
-            this.TabPage1.Padding = new Padding(3);
-            this.TabPage1.Size = new Size(1201, 724);
+            this.TabPage1.Location = new System.Drawing.Point(4, 25);
+            this.TabPage1.Name = "TabPage1";
+            this.TabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.TabPage1.Size = new System.Drawing.Size(1201, 723);
             this.TabPage1.TabIndex = 0;
             this.TabPage1.Text = "Main";
-
-            Label1.Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0);
-            Label1.Location = new Point(611, 89);
-            Label1.Name = "label4";
-            Label1.Size = new Size(575, 569);
-            Label1.TabIndex = 14;
-
-            Label2.Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0);
-            Label2.Location = new Point(21, 89);
-            Label2.Name = "label3";
-            Label2.Size = new Size(575, 569);
-            Label2.TabIndex = 13;
-
-            this.TextBoxBtName.Location = new Point(724, 12);
-            this.TextBoxBtName.Margin = new Padding(4);
-            this.TextBoxBtName.Name = "textBoxBTName";
-            this.TextBoxBtName.Size = new Size(227, 22);
+            // 
+            // Label1
+            // 
+            this.Label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Label1.Location = new System.Drawing.Point(611, 89);
+            this.Label1.Name = "Label1";
+            this.Label1.Size = new System.Drawing.Size(575, 569);
+            this.Label1.TabIndex = 14;
+            // 
+            // Label2
+            // 
+            this.Label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Label2.Location = new System.Drawing.Point(21, 89);
+            this.Label2.Name = "Label2";
+            this.Label2.Size = new System.Drawing.Size(575, 569);
+            this.Label2.TabIndex = 13;
+            // 
+            // TextBoxBtName
+            // 
+            this.TextBoxBtName.Location = new System.Drawing.Point(724, 12);
+            this.TextBoxBtName.Margin = new System.Windows.Forms.Padding(4);
+            this.TextBoxBtName.Name = "TextBoxBtName";
+            this.TextBoxBtName.Size = new System.Drawing.Size(227, 22);
             this.TextBoxBtName.TabIndex = 12;
             this.TextBoxBtName.Tag = "BTN";
             this.TextBoxBtName.Visible = false;
-
-            this.LabelBtName.Location = new Point(611, 12);
-            this.LabelBtName.Margin = new Padding(4, 0, 4, 0);
-            this.LabelBtName.Name = "labelBTName";
-            this.LabelBtName.Size = new Size(117, 28);
+            // 
+            // LabelBtName
+            // 
+            this.LabelBtName.Location = new System.Drawing.Point(611, 12);
+            this.LabelBtName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LabelBtName.Name = "LabelBtName";
+            this.LabelBtName.Size = new System.Drawing.Size(117, 28);
             this.LabelBtName.TabIndex = 11;
             this.LabelBtName.Text = "Bluetooth Name:";
-            this.LabelBtName.TextAlign = ContentAlignment.MiddleLeft;
+            this.LabelBtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.LabelBtName.Visible = false;
-
-            this.TextBoxSN.Location = new Point(163, 44);
-            this.TextBoxSN.Margin = new Padding(4);
-            this.TextBoxSN.Name = "textBoxSN";
+            // 
+            // TextBoxSN
+            // 
+            this.TextBoxSN.Location = new System.Drawing.Point(163, 44);
+            this.TextBoxSN.Margin = new System.Windows.Forms.Padding(4);
+            this.TextBoxSN.Name = "TextBoxSN";
             this.TextBoxSN.ReadOnly = true;
-            this.TextBoxSN.Size = new Size(208, 22);
+            this.TextBoxSN.Size = new System.Drawing.Size(208, 22);
             this.TextBoxSN.TabIndex = 9;
-
-            this.TextBoxVin.Location = new Point(163, 12);
-            this.TextBoxVin.Margin = new Padding(4);
-            this.TextBoxVin.Name = "textBoxVIN";
-            this.TextBoxVin.Size = new Size(208, 22);
+            // 
+            // TextBoxVin
+            // 
+            this.TextBoxVin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextBoxVin.Location = new System.Drawing.Point(163, 12);
+            this.TextBoxVin.Margin = new System.Windows.Forms.Padding(4);
+            this.TextBoxVin.Name = "TextBoxVin";
+            this.TextBoxVin.Size = new System.Drawing.Size(208, 23);
             this.TextBoxVin.TabIndex = 10;
-            this.TextBoxVin.Font = new Font("Microsoft Sans Serif", 8.25f, FontStyle.Regular, GraphicsUnit.Point, 0);
-
-            this.LabelNacSerial.Location = new Point(21, 44);
-            this.LabelNacSerial.Margin = new Padding(4, 0, 4, 0);
-            this.LabelNacSerial.Name = "label2";
-            this.LabelNacSerial.Size = new Size(133, 28);
+            // 
+            // LabelNacSerial
+            // 
+            this.LabelNacSerial.Location = new System.Drawing.Point(21, 44);
+            this.LabelNacSerial.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LabelNacSerial.Name = "LabelNacSerial";
+            this.LabelNacSerial.Size = new System.Drawing.Size(133, 28);
             this.LabelNacSerial.TabIndex = 1;
             this.LabelNacSerial.Text = "NAC serial number:";
-            this.LabelNacSerial.TextAlign = ContentAlignment.MiddleLeft;
-
-            this.LabelVin.Location = new Point(21, 16);
-            this.LabelVin.Margin = new Padding(4, 0, 4, 0);
-            this.LabelVin.Name = "label1";
-            this.LabelVin.Size = new Size(133, 28);
+            this.LabelNacSerial.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // LabelVin
+            // 
+            this.LabelVin.Location = new System.Drawing.Point(21, 16);
+            this.LabelVin.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LabelVin.Name = "LabelVin";
+            this.LabelVin.Size = new System.Drawing.Size(133, 28);
             this.LabelVin.TabIndex = 0;
             this.LabelVin.Text = "VIN:";
-            this.LabelVin.TextAlign = ContentAlignment.MiddleLeft;
-
-            this.ButtonSave.Location = new Point(840, 11);
-            this.ButtonSave.Margin = new Padding(4);
-            this.ButtonSave.Name = "buttonSave";
-            this.ButtonSave.Size = new Size(100, 28);
+            this.LabelVin.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // ButtonSave
+            // 
+            this.ButtonSave.Location = new System.Drawing.Point(840, 11);
+            this.ButtonSave.Margin = new System.Windows.Forms.Padding(4);
+            this.ButtonSave.Name = "ButtonSave";
+            this.ButtonSave.Size = new System.Drawing.Size(100, 28);
             this.ButtonSave.TabIndex = 1;
             this.ButtonSave.Text = "Save";
             this.ButtonSave.UseVisualStyleBackColor = true;
-            this.ButtonSave.Click += OnButtonSaveClick;
-
-            this.ButtonCancel.DialogResult = DialogResult.Cancel;
-            this.ButtonCancel.Location = new Point(265, 11);
-            this.ButtonCancel.Margin = new Padding(4);
-            this.ButtonCancel.Name = "buttonCancel";
-            this.ButtonCancel.Size = new Size(100, 28);
+            this.ButtonSave.Click += new System.EventHandler(this.OnButtonSaveClick);
+            // 
+            // ButtonCancel
+            // 
+            this.ButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.ButtonCancel.Location = new System.Drawing.Point(265, 11);
+            this.ButtonCancel.Margin = new System.Windows.Forms.Padding(4);
+            this.ButtonCancel.Name = "ButtonCancel";
+            this.ButtonCancel.Size = new System.Drawing.Size(100, 28);
             this.ButtonCancel.TabIndex = 0;
             this.ButtonCancel.Text = "Cancel";
             this.ButtonCancel.UseVisualStyleBackColor = true;
-
-            // Form
-            base.AcceptButton = this.ButtonSave;
-            base.AutoScaleDimensions = new SizeF(8f, 16f);
-            base.AutoScaleMode = AutoScaleMode.Font;
+            // 
+            // ParamsForm
+            // 
+            this.AcceptButton = this.ButtonSave;
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            base.CancelButton = this.ButtonCancel;
-            base.ClientSize = new Size(1209, 810);
-            base.ControlBox = false;
-            base.Controls.Add(this.SplitContainer1);
-            base.Margin = new Padding(4);
-            this.MinimumSize = new Size(1227, 828);
-            base.Name = "MainParams";
-            base.ShowInTaskbar = false;
+            this.CancelButton = this.ButtonCancel;
+            this.ClientSize = new System.Drawing.Size(1209, 810);
+            this.ControlBox = false;
+            this.Controls.Add(this.SplitContainer1);
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.MinimumSize = new System.Drawing.Size(1227, 828);
+            this.Name = "ParamsForm";
+            this.ShowInTaskbar = false;
             this.Text = "Parameters";
-            base.Load += OnFormLoad;
-
+            this.Load += new System.EventHandler(this.OnFormLoad);
             this.SplitContainer1.Panel1.ResumeLayout(false);
             this.SplitContainer1.Panel2.ResumeLayout(false);
-
-            ((ISupportInitialize)this.SplitContainer1).EndInit();
-
+            ((System.ComponentModel.ISupportInitialize)(this.SplitContainer1)).EndInit();
             this.SplitContainer1.ResumeLayout(false);
             this.TabControl1.ResumeLayout(false);
             this.TabPage1.ResumeLayout(false);
             this.TabPage1.PerformLayout();
-            ResumeLayout(false);
+            this.ResumeLayout(false);
+
         }
     }
 }
