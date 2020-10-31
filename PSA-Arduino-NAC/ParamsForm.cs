@@ -175,6 +175,17 @@ namespace PSA_Arduino_NAC
 
                         tabPage.Controls.Add(labelZoneCode);
 
+                        Label labelZoneDesc = new Label
+                        {
+                            Location = new Point(labelXPosStart + 350, currentYPos + paramIndex * 30),
+                            Name = jsonZone.Value["name"].ToString() + "_desc",
+                            Text = $"({zoneDescription})",
+                            Font = new Font("Microsoft Sans Serif", 9f, FontStyle.Italic, GraphicsUnit.Point, 0),
+                            Size = new Size(450, 25)
+                        };
+
+                        tabPage.Controls.Add(labelZoneDesc);
+
                         currentYPos += 30;
 
                         foreach (JObject zoneParams in jsonZone.Value["params"].Children())
