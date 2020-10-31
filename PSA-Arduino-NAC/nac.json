@@ -5,6 +5,10 @@
     "zones": {
       "2100": {
         "name": "Telecoding_Fct_AAS",
+        "acronyms": "AAS",
+        "description": {
+          "fr": "Aide au stationnement"
+        },
         "params": [
           {
             "name": "AKS",
@@ -81,6 +85,10 @@
       },
       "2101": {
         "name": "Telecoding_Fct_AFIL",
+        "acronyms": "AFIL",
+        "description": {
+          "fr": "Alerte de franchissement"
+        },
         "params": [
           {
             "name": "D8N",
@@ -122,6 +130,10 @@
       },
       "2103": {
         "name": "Telecoding_Fct_ARTIV",
+        "acronyms": "ARTIV",
+        "description": {
+          "fr": "Aide au respect du temps intervéhicule"
+        },
         "params": [
           {
             "name": "DMX",
@@ -217,6 +229,10 @@
       },
       "2104": {
         "name": "Telecoding_Fct_AUDIO",
+        "acronyms": "AUDIO",
+        "description": {
+          "fr": "Audio"
+        },
         "params": [
           {
             "name": "B8J",
@@ -492,6 +508,10 @@
       },
       "2105": {
         "name": "Telecoding_Fct_AVP",
+        "acronyms": "AVP",
+        "description": {
+          "fr": "Aide visuelle panoramique"
+        },
         "params": [
           {
             "name": "DMN",
@@ -603,7 +623,12 @@
         ]
       },
       "2106": {
+        "sigle": "AVR",
         "name": "Telecoding_Fct_AVR",
+        "acronyms": "AVR",
+        "description": {
+          "fr": "Aide visuelle recul"
+        },
         "params": [
           {
             "name": "DR3",
@@ -645,6 +670,10 @@
       },
       "2107": {
         "name": "Telecoding_Fct_BT",
+        "acronyms": "BT",
+        "description": {
+          "fr": "Bluetooth"
+        },
         "params": [
           {
             "name": "APW",
@@ -662,6 +691,10 @@
       },
       "2108": {
         "name": "Telecoding_Fct_BTEL",
+        "acronyms": "BTEL",
+        "description": {
+          "fr": "Boitier Télématique"
+        },
         "params": [
           {
             "name": "AD4",
@@ -1131,6 +1164,10 @@
       },
       "2109": {
         "name": "Telecoding_Fct_CAFR",
+        "acronyms": "CAFR",
+        "description": {
+          "fr": "Changement automatique des feux de route"
+        },
         "params": [
           {
             "name": "DMO",
@@ -1160,6 +1197,10 @@
       },
       "2110": {
         "name": "Telecoding_Fct_SCREEN2",
+        "acronyms": "SCREEN2",
+        "description": {
+          "fr": "Ecran secondaire"
+        },
         "params": [
           {
             "name": "DBZ",
@@ -1193,6 +1234,10 @@
       },
       "2112": {
         "name": "Telecoding_Fct_HDC",
+        "acronyms": "HDC",
+        "description": {
+          "fr": "HDC"
+        },
         "params": [
           {
             "name": "DVB",
@@ -1303,6 +1348,10 @@
       },
       "2113": {
         "name": "Telecoding_Fct_HY",
+        "acronyms": "HY",
+        "description": {
+          "fr": "Hybride"
+        },
         "params": [
           {
             "name": "DLZ",
@@ -1476,6 +1525,10 @@
       },
       "2114": {
         "name": "Telecoding_Fct_INTERNET",
+        "acronyms": "INTERNET",
+        "description": {
+          "fr": "Internet"
+        },
         "params": [
           {
             "name": "BZ3",
@@ -1552,6 +1605,10 @@
       },
       "2115": {
         "name": "Telecoding_Fct_MPD",
+        "acronyms": "MPD",
+        "description": {
+          "fr": "Mesure place disponible"
+        },
         "params": [
           {
             "name": "D8O",
@@ -1593,6 +1650,10 @@
       },
       "2116": {
         "name": "Telecoding_Fct_NAV",
+        "acronyms": "NAV",
+        "description": {
+          "fr": "Navigation"
+        },
         "params": [
           {
             "name": "BHC",
@@ -1748,6 +1809,10 @@
       },
       "2117": {
         "name": "Telecoding_Fct_RADIO",
+        "acronyms": "RADIO",
+        "description": {
+          "fr": "Radio"
+        },
         "params": [
           {
             "name": "B8C",
@@ -1909,6 +1974,10 @@
       },
       "2118": {
         "name": "Telecoding_Fct_RADIO_NUM",
+        "acronyms": "RADIO_NUM",
+        "description": {
+          "fr": "Radio Numérique"
+        },
         "params": [
           {
             "name": "BO5",
@@ -1956,6 +2025,10 @@
       },
       "2119": {
         "name": "Telecoding_Fct_SAM",
+        "acronyms": "SAM",
+        "description": {
+          "fr": "Surveillance d'angle mort"
+        },
         "params": [
           {
             "name": "D8P",
@@ -1997,6 +2070,11 @@
       },
       "2120": {
         "name": "Telecoding_Fct_LKA",
+        "acronyms": "LKA",
+        "description": {
+          "fr": "Maintien dans la voie",
+          "en": "Line keeping assist"
+        },
         "params": [
           {
             "name": "DM9",
@@ -2038,6 +2116,10 @@
       },
       "2121": {
         "name": "Telecoding_Fct_ACV",
+        "acronyms": "ACV",
+        "description": {
+          "fr": "Contrôle automatique du volume"
+        },
         "params": [
           {
             "name": "DMA",
@@ -2079,6 +2161,10 @@
       },
       "2123": {
         "name": "Telecoding_Fct_ALERTS",
+        "acronyms": "ALERTS",
+        "description": {
+          "fr": "Alertes ordinateur de bord"
+        },
         "params": [
           {
             "name": "DNL",
@@ -2108,6 +2194,10 @@
       },
       "2124": {
         "name": "Telecoding_Fct_LUM",
+        "acronyms": "LUM",
+        "description": {
+          "fr": "Luminosité"
+        },
         "params": [
           {
             "name": "DNK",
@@ -2125,6 +2215,10 @@
       },
       "2125": {
         "name": "Telecoding_Fct_OBC",
+        "acronyms": "OBC",
+        "description": {
+          "fr": "Ordinateur de bord"
+        },
         "params": [
           {
             "name": "DNE",
@@ -2615,6 +2709,10 @@
       },
       "2126": {
         "name": "Telecoding_Fct_CPUSH",
+        "acronyms": "CPUSH",
+        "description": {
+          "fr": "CPUSH"
+        },
         "params": [
           {
             "name": "DR7",
@@ -2668,6 +2766,10 @@
       },
       "2127": {
         "name": "Telecoding_Fct_HMI",
+        "acronyms": "HMI",
+        "description": {
+          "fr": "Interfaces utilisateur"
+        },
         "params": [
           {
             "name": "DSH",
@@ -11713,6 +11815,10 @@
       },
       "2128": {
         "name": "Telecoding_Fct_SPY",
+        "acronyms": "SPY",
+        "description": {
+          "fr": "Menu expert"
+        },
         "params": [
           {
             "name": "DTR",
@@ -11730,6 +11836,10 @@
       },
       "2129": {
         "name": "Telecoding_Fct_LVDS",
+        "acronyms": "LVDS",
+        "description": {
+          "fr": "Connexion dalle d'affichage"
+        },
         "params": [
           {
             "name": "DW0",
@@ -11815,6 +11925,10 @@
       },
       "2130": {
         "name": "Telecoding_Fct_BTA",
+        "acronyms": "BTA",
+        "description": {
+          "fr": "Boitier télématique autonome"
+        },
         "params": [
           {
             "name": "E8Q",
@@ -11832,6 +11946,10 @@
       },
       "2131": {
         "name": "Telecoding_Fct_ANDROID",
+        "acronyms": "ANDROID",
+        "description": {
+          "fr": "Android auto"
+        },
         "params": [
           {
             "name": "EEN",
@@ -11849,6 +11967,10 @@
       },
       "2133": {
         "name": "Telecoding_Fct_WAVE3",
+        "acronyms": "WAVE3",
+        "description": {
+          "fr": "Configuration Wave 3"
+        },
         "params": [
           {
             "name": "DFU",
@@ -12226,6 +12348,10 @@
       },
       "2145": {
         "name": "Telecoding_Fct_AIO",
+        "acronyms": "AIO",
+        "description": {
+          "fr": "Configuration AIO"
+        },
         "params": [
           {
             "name": "BFG",
@@ -12255,6 +12381,10 @@
       },
       "0106": {
         "name": "Telecoding_Fct_BluetoothName",
+        "acronyms": "BluetoothName",
+        "description": {
+          "fr": "Nom bluetooth"
+        },
         "params": [
           {
             "name": "BTN",
@@ -12272,6 +12402,10 @@
       },
       "F190": {
         "name": "Telecoding_Fct_VIN",
+        "acronyms": "VIN",
+        "description": {
+          "fr": "Configuration VIN"
+        },
         "params": [
           {
             "name": "VIN",
@@ -12306,6 +12440,10 @@
       },
       "210B": {
         "name": "Telecoding_Fct_CHECK",
+        "acronyms": "CHECK",
+        "description": {
+          "fr": "Configuration check"
+        },
         "params": [
           {
             "name": "ERG",
@@ -12323,6 +12461,10 @@
       },
       "210A": {
         "name": "Telecoding_Fct_CHANGER_CD",
+        "acronyms": "CHANGER_CD",
+        "description": {
+          "fr": "Configuration chargeur CD"
+        },
         "params": [
           {
             "name": "ACS",
@@ -12340,6 +12482,10 @@
       },
       "210C": {
         "name": "Telecoding_Fct_CITYPARK",
+        "acronyms": "CITYPARK",
+        "description": {
+          "fr": "Stationnement semi-automatique"
+        },
         "params": [
           {
             "name": "D7L",
@@ -12416,6 +12562,10 @@
       },
       "210D": {
         "name": "Telecoding_Fct_CLIM",
+        "acronyms": "CLIM",
+        "description": {
+          "fr": "Climatisation"
+        },
         "params": [
           {
             "name": "D8W",
@@ -12690,6 +12840,10 @@
       },
       "210E": {
         "name": "Telecoding_Fct_DSG",
+        "acronyms": "DSG",
+        "description": {
+          "fr": "Détection sous-gonflage"
+        },
         "params": [
           {
             "name": "DMI",
@@ -12731,6 +12885,10 @@
       },
       "210F": {
         "name": "Telecoding_Fct_SCREEN",
+        "acronyms": "SCREEN",
+        "description": {
+          "fr": "Ecran tactile"
+        },
         "params": [
           {
             "name": "DBM",
@@ -12778,6 +12936,10 @@
       },
       "211A": {
         "name": "Telecoding_Fct_STT",
+        "acronyms": "STT",
+        "description": {
+          "fr": "Start and Stop"
+        },
         "params": [
           {
             "name": "D8T",
@@ -12819,6 +12981,10 @@
       },
       "211B": {
         "name": "Telecoding_Fct_XVV",
+        "acronyms": "XVV",
+        "description": {
+          "fr": "Limitateur et régulateur de vitesse"
+        },
         "params": [
           {
             "name": "DRK",
@@ -12992,6 +13158,10 @@
       },
       "211C": {
         "name": "Telecoding_Fct_WIFI",
+        "acronyms": "WIFI",
+        "description": {
+          "fr": "Wifi"
+        },
         "params": [
           {
             "name": "DTU",
@@ -13045,6 +13215,10 @@
       },
       "211F": {
         "name": "Telecoding_Fct_LANG",
+        "acronyms": "LANG",
+        "description": {
+          "fr": "Langue"
+        },
         "params": [
           {
             "name": "DNJ",
@@ -13118,6 +13292,11 @@
       },
       "211D": {
         "name": "Telecoding_Fct_ASR",
+        "acronyms": "ASR",
+        "description": {
+          "fr": "Antipatinage des roues",
+          "en":  "anti-slip regulation"
+        },
         "params": [
           {
             "name": "E7X",
@@ -13159,6 +13338,10 @@
       },
       "212C": {
         "name": "Telecoding_Fct_ION",
+        "acronyms": "ION",
+        "description": {
+          "fr": "Ionisateur air"
+        },
         "params": [
           {
             "name": "E83",
@@ -13200,6 +13383,10 @@
       },
       "212D": {
         "name": "Telecoding_Fct_PPS",
+        "acronyms": "PPS",
+        "description": {
+          "fr": "Confort"
+        },
         "params": [
           {
             "name": "EBP",
@@ -13241,6 +13428,10 @@
       },
       "212E": {
         "name": "Telecoding_Fct_IDVR",
+        "acronyms": "IDVR",
+        "description": {
+          "fr": "Enregistrement vidéo"
+        },
         "params": [
           {
             "name": "ECG",
@@ -13258,6 +13449,10 @@
       },
       "212F": {
         "name": "Telecoding_Fct_AUDIO2",
+        "acronyms": "AUDIO2",
+        "description": {
+          "fr": "Configuration Audio 2"
+        },
         "params": [
           {
             "name": "AWG",
@@ -13299,6 +13494,10 @@
       },
       "212A": {
         "name": "Telecoding_Fct_VISIOPARK",
+        "acronyms": "VISIOPARK",
+        "description": {
+          "fr": "Visio park"
+        },
         "params": [
           {
             "name": "E4H",

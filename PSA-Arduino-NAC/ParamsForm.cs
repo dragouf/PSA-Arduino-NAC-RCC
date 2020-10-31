@@ -40,9 +40,9 @@ namespace PSA_Arduino_NAC
 
         private Label LabelBtName;
 
-        private Label Label1;
+        private Label LabelZoneSummary2;
 
-        private Label Label2;
+        private Label LabelZoneSummary1;
 
         private TabPage TabPage1;
         private TabControl TabControl1;
@@ -132,7 +132,7 @@ namespace PSA_Arduino_NAC
                     Regex regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
                     int paramIndex = 0;
 
-                    List<string> zonesFlatten = new List<string>();
+                    List<string> zonesLabels = new List<string>();
 
                     foreach (JProperty jsonZone in jsonObject.Root["NAC"]["zones"].Children())
                     {
@@ -142,7 +142,13 @@ namespace PSA_Arduino_NAC
                             continue;
                         }
 
-                        zonesFlatten.Add(zoneNodeCode + ": " + jsonZone.Value["name"].ToString() + "\n");
+                        var zoneName = jsonZone.Value["name"]?.ToString();
+                        var zoneDescription = jsonZone.Value["description"][this.LanguageCode]?.ToString() ?? "";
+                        var zoneAcronym = jsonZone.Value["acronyms"]?.ToString();
+
+                        var zoneLabel = $"{zoneNodeCode}: {zoneDescription} [{zoneAcronym}]\n";
+
+                        zonesLabels.Add(zoneLabel);
 
                         TabPage tabPage = new TabPage(zoneNodeCode)
                         {
@@ -150,7 +156,8 @@ namespace PSA_Arduino_NAC
                             BackColor = SystemColors.Control,
                             Padding = new Padding(3),
                             TabIndex = 0,
-                            Name = jsonZone.Name
+                            Name = jsonZone.Name,
+                            ToolTipText = string.IsNullOrEmpty(zoneDescription) ? zoneAcronym : zoneDescription
                         };
 
                         int currentYPos = labelYPosStart;
@@ -160,7 +167,7 @@ namespace PSA_Arduino_NAC
                         {
                             Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
                             Name = jsonZone.Value["name"].ToString(),
-                            Text = zoneNodeCode + ": " + jsonZone.Value["name"].ToString(),
+                            Text = zoneNodeCode + ": " + zoneName,
                             Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0),
                             Size = new Size(350, 25),
                             TabIndex = 4
@@ -416,15 +423,16 @@ namespace PSA_Arduino_NAC
                         this.TabControl1.TabPages.Add(tabPage);
                     }
 
-                    for (int i = 0; i < zonesFlatten.Count; i++)
+                    // zone summary
+                    for (int index = 0; index < zonesLabels.Count; index++)
                     {
-                        if (i < unchecked(zonesFlatten.Count / 2))
+                        if (index < unchecked(zonesLabels.Count / 2))
                         {
-                            Label2.Text += zonesFlatten[i].ToString();
+                            LabelZoneSummary1.Text += zonesLabels[index].ToString();
                         }
                         else
                         {
-                            Label1.Text += zonesFlatten[i].ToString();
+                            LabelZoneSummary2.Text += zonesLabels[index].ToString();
                         }
                     }
                 }
@@ -779,8 +787,8 @@ namespace PSA_Arduino_NAC
             this.SplitContainer1 = new System.Windows.Forms.SplitContainer();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.TabPage1 = new System.Windows.Forms.TabPage();
-            this.Label1 = new System.Windows.Forms.Label();
-            this.Label2 = new System.Windows.Forms.Label();
+            this.LabelZoneSummary2 = new System.Windows.Forms.Label();
+            this.LabelZoneSummary1 = new System.Windows.Forms.Label();
             this.TextBoxBtName = new System.Windows.Forms.TextBox();
             this.LabelBtName = new System.Windows.Forms.Label();
             this.TextBoxSN = new System.Windows.Forms.TextBox();
@@ -817,7 +825,7 @@ namespace PSA_Arduino_NAC
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonSave);
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonCancel);
             this.SplitContainer1.Size = new System.Drawing.Size(1209, 810);
-            this.SplitContainer1.SplitterDistance = 752;
+            this.SplitContainer1.SplitterDistance = 774;
             this.SplitContainer1.SplitterWidth = 5;
             this.SplitContainer1.TabIndex = 0;
             // 
@@ -830,15 +838,16 @@ namespace PSA_Arduino_NAC
             this.TabControl1.Name = "TabControl1";
             this.TabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.TabControl1.SelectedIndex = 0;
-            this.TabControl1.Size = new System.Drawing.Size(1209, 752);
+            this.TabControl1.ShowToolTips = true;
+            this.TabControl1.Size = new System.Drawing.Size(1209, 774);
             this.TabControl1.TabIndex = 13;
             // 
             // TabPage1
             // 
             this.TabPage1.AutoScroll = true;
             this.TabPage1.BackColor = System.Drawing.SystemColors.Control;
-            this.TabPage1.Controls.Add(this.Label1);
-            this.TabPage1.Controls.Add(this.Label2);
+            this.TabPage1.Controls.Add(this.LabelZoneSummary2);
+            this.TabPage1.Controls.Add(this.LabelZoneSummary1);
             this.TabPage1.Controls.Add(this.TextBoxBtName);
             this.TabPage1.Controls.Add(this.LabelBtName);
             this.TabPage1.Controls.Add(this.TextBoxSN);
@@ -848,25 +857,25 @@ namespace PSA_Arduino_NAC
             this.TabPage1.Location = new System.Drawing.Point(4, 25);
             this.TabPage1.Name = "TabPage1";
             this.TabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage1.Size = new System.Drawing.Size(1201, 723);
+            this.TabPage1.Size = new System.Drawing.Size(1201, 745);
             this.TabPage1.TabIndex = 0;
             this.TabPage1.Text = "Main";
             // 
-            // Label1
+            // LabelZoneSummary2
             // 
-            this.Label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label1.Location = new System.Drawing.Point(611, 89);
-            this.Label1.Name = "Label1";
-            this.Label1.Size = new System.Drawing.Size(575, 569);
-            this.Label1.TabIndex = 14;
+            this.LabelZoneSummary2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelZoneSummary2.Location = new System.Drawing.Point(611, 89);
+            this.LabelZoneSummary2.Name = "LabelZoneSummary2";
+            this.LabelZoneSummary2.Size = new System.Drawing.Size(575, 569);
+            this.LabelZoneSummary2.TabIndex = 14;
             // 
-            // Label2
+            // LabelZoneSummary1
             // 
-            this.Label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Label2.Location = new System.Drawing.Point(21, 89);
-            this.Label2.Name = "Label2";
-            this.Label2.Size = new System.Drawing.Size(575, 569);
-            this.Label2.TabIndex = 13;
+            this.LabelZoneSummary1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelZoneSummary1.Location = new System.Drawing.Point(21, 89);
+            this.LabelZoneSummary1.Name = "LabelZoneSummary1";
+            this.LabelZoneSummary1.Size = new System.Drawing.Size(575, 569);
+            this.LabelZoneSummary1.TabIndex = 13;
             // 
             // TextBoxBtName
             // 
@@ -929,7 +938,7 @@ namespace PSA_Arduino_NAC
             // 
             // ButtonSave
             // 
-            this.ButtonSave.Location = new System.Drawing.Point(840, 11);
+            this.ButtonSave.Location = new System.Drawing.Point(1105, 2);
             this.ButtonSave.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonSave.Name = "ButtonSave";
             this.ButtonSave.Size = new System.Drawing.Size(100, 28);
@@ -941,7 +950,7 @@ namespace PSA_Arduino_NAC
             // ButtonCancel
             // 
             this.ButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ButtonCancel.Location = new System.Drawing.Point(265, 11);
+            this.ButtonCancel.Location = new System.Drawing.Point(997, 4);
             this.ButtonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonCancel.Name = "ButtonCancel";
             this.ButtonCancel.Size = new System.Drawing.Size(100, 28);
