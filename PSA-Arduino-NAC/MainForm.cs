@@ -433,9 +433,9 @@ namespace PSA_Arduino_NAC
 
             if (this.ComboBoxCom.Items.Count == 0)
             {
-                MessageBox.Show(this, "Error: No COM port found", "Error");
+                // MessageBox.Show(this, "Error: No COM port found", "Error");
                 this.ButtonSerial.Enabled = false;
-                Application.Exit();
+                // Application.Exit();
             }
 
             string jsonText = File.ReadAllText(this.JsonPath);
