@@ -11,6 +11,7 @@ fork of https://github.com/ludwig-v/arduino-psa-nac_rcc_cirocco
 - This is the offline version (include seed/key algorithm). 
 - You have an offline editor (to edit configuration at home before to send it to the car)
 - Zone description instead of system name on main board (french only)
+- .Net core for cross plateform execution (mac, linux, windows)
 
 
 You have the source code as well if you want to improve it and better understand how it is working.
