@@ -835,8 +835,8 @@ namespace arduino_psa_diag
             // 
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonSave);
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonCancel);
-            this.SplitContainer1.Size = new System.Drawing.Size(1209, 810);
-            this.SplitContainer1.SplitterDistance = 774;
+            this.SplitContainer1.Size = new System.Drawing.Size(1060, 763);
+            this.SplitContainer1.SplitterDistance = 725;
             this.SplitContainer1.SplitterWidth = 5;
             this.SplitContainer1.TabIndex = 0;
             // 
@@ -850,7 +850,7 @@ namespace arduino_psa_diag
             this.TabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.TabControl1.SelectedIndex = 0;
             this.TabControl1.ShowToolTips = true;
-            this.TabControl1.Size = new System.Drawing.Size(1209, 774);
+            this.TabControl1.Size = new System.Drawing.Size(1060, 725);
             this.TabControl1.TabIndex = 13;
             // 
             // TabPage1
@@ -865,45 +865,45 @@ namespace arduino_psa_diag
             this.TabPage1.Controls.Add(this.TextBoxVin);
             this.TabPage1.Controls.Add(this.LabelNacSerial);
             this.TabPage1.Controls.Add(this.LabelVin);
-            this.TabPage1.Location = new System.Drawing.Point(4, 25);
+            this.TabPage1.Location = new System.Drawing.Point(4, 24);
             this.TabPage1.Name = "TabPage1";
             this.TabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage1.Size = new System.Drawing.Size(1201, 745);
+            this.TabPage1.Size = new System.Drawing.Size(1052, 697);
             this.TabPage1.TabIndex = 0;
             this.TabPage1.Text = "Main";
             // 
             // LabelZoneSummary2
             // 
-            this.LabelZoneSummary2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LabelZoneSummary2.Location = new System.Drawing.Point(611, 89);
+            this.LabelZoneSummary2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.LabelZoneSummary2.Location = new System.Drawing.Point(535, 83);
             this.LabelZoneSummary2.Name = "LabelZoneSummary2";
-            this.LabelZoneSummary2.Size = new System.Drawing.Size(575, 569);
+            this.LabelZoneSummary2.Size = new System.Drawing.Size(503, 533);
             this.LabelZoneSummary2.TabIndex = 14;
             // 
             // LabelZoneSummary1
             // 
-            this.LabelZoneSummary1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LabelZoneSummary1.Location = new System.Drawing.Point(21, 89);
+            this.LabelZoneSummary1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.LabelZoneSummary1.Location = new System.Drawing.Point(18, 83);
             this.LabelZoneSummary1.Name = "LabelZoneSummary1";
-            this.LabelZoneSummary1.Size = new System.Drawing.Size(575, 569);
+            this.LabelZoneSummary1.Size = new System.Drawing.Size(503, 533);
             this.LabelZoneSummary1.TabIndex = 13;
             // 
             // TextBoxBtName
             // 
-            this.TextBoxBtName.Location = new System.Drawing.Point(724, 12);
+            this.TextBoxBtName.Location = new System.Drawing.Point(634, 11);
             this.TextBoxBtName.Margin = new System.Windows.Forms.Padding(4);
             this.TextBoxBtName.Name = "TextBoxBtName";
-            this.TextBoxBtName.Size = new System.Drawing.Size(227, 22);
+            this.TextBoxBtName.Size = new System.Drawing.Size(199, 23);
             this.TextBoxBtName.TabIndex = 12;
             this.TextBoxBtName.Tag = "BTN";
             this.TextBoxBtName.Visible = false;
             // 
             // LabelBtName
             // 
-            this.LabelBtName.Location = new System.Drawing.Point(611, 12);
+            this.LabelBtName.Location = new System.Drawing.Point(535, 11);
             this.LabelBtName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelBtName.Name = "LabelBtName";
-            this.LabelBtName.Size = new System.Drawing.Size(117, 28);
+            this.LabelBtName.Size = new System.Drawing.Size(102, 26);
             this.LabelBtName.TabIndex = 11;
             this.LabelBtName.Text = "Bluetooth Name:";
             this.LabelBtName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -911,48 +911,49 @@ namespace arduino_psa_diag
             // 
             // TextBoxSN
             // 
-            this.TextBoxSN.Location = new System.Drawing.Point(163, 44);
+            this.TextBoxSN.Location = new System.Drawing.Point(143, 41);
             this.TextBoxSN.Margin = new System.Windows.Forms.Padding(4);
             this.TextBoxSN.Name = "TextBoxSN";
             this.TextBoxSN.ReadOnly = true;
-            this.TextBoxSN.Size = new System.Drawing.Size(208, 22);
+            this.TextBoxSN.Size = new System.Drawing.Size(182, 23);
             this.TextBoxSN.TabIndex = 9;
             // 
             // TextBoxVin
             // 
-            this.TextBoxVin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TextBoxVin.Location = new System.Drawing.Point(163, 12);
+            this.TextBoxVin.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.TextBoxVin.Location = new System.Drawing.Point(143, 11);
             this.TextBoxVin.Margin = new System.Windows.Forms.Padding(4);
             this.TextBoxVin.Name = "TextBoxVin";
-            this.TextBoxVin.Size = new System.Drawing.Size(208, 23);
+            this.TextBoxVin.Size = new System.Drawing.Size(182, 20);
             this.TextBoxVin.TabIndex = 10;
             // 
             // LabelNacSerial
             // 
-            this.LabelNacSerial.Location = new System.Drawing.Point(21, 44);
+            this.LabelNacSerial.Location = new System.Drawing.Point(18, 41);
             this.LabelNacSerial.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelNacSerial.Name = "LabelNacSerial";
-            this.LabelNacSerial.Size = new System.Drawing.Size(133, 28);
+            this.LabelNacSerial.Size = new System.Drawing.Size(116, 26);
             this.LabelNacSerial.TabIndex = 1;
             this.LabelNacSerial.Text = "NAC serial number:";
             this.LabelNacSerial.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // LabelVin
             // 
-            this.LabelVin.Location = new System.Drawing.Point(21, 16);
+            this.LabelVin.Location = new System.Drawing.Point(18, 15);
             this.LabelVin.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelVin.Name = "LabelVin";
-            this.LabelVin.Size = new System.Drawing.Size(133, 28);
+            this.LabelVin.Size = new System.Drawing.Size(116, 26);
             this.LabelVin.TabIndex = 0;
             this.LabelVin.Text = "VIN:";
             this.LabelVin.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ButtonSave
             // 
-            this.ButtonSave.Location = new System.Drawing.Point(1105, 2);
+            this.ButtonSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonSave.Location = new System.Drawing.Point(968, 4);
             this.ButtonSave.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonSave.Name = "ButtonSave";
-            this.ButtonSave.Size = new System.Drawing.Size(100, 28);
+            this.ButtonSave.Size = new System.Drawing.Size(88, 26);
             this.ButtonSave.TabIndex = 1;
             this.ButtonSave.Text = "Save";
             this.ButtonSave.UseVisualStyleBackColor = true;
@@ -960,11 +961,12 @@ namespace arduino_psa_diag
             // 
             // ButtonCancel
             // 
+            this.ButtonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.ButtonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.ButtonCancel.Location = new System.Drawing.Point(997, 4);
+            this.ButtonCancel.Location = new System.Drawing.Point(872, 4);
             this.ButtonCancel.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonCancel.Name = "ButtonCancel";
-            this.ButtonCancel.Size = new System.Drawing.Size(100, 28);
+            this.ButtonCancel.Size = new System.Drawing.Size(88, 26);
             this.ButtonCancel.TabIndex = 0;
             this.ButtonCancel.Text = "Cancel";
             this.ButtonCancel.UseVisualStyleBackColor = true;
@@ -972,15 +974,15 @@ namespace arduino_psa_diag
             // ParamsForm
             // 
             this.AcceptButton = this.ButtonSave;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.CancelButton = this.ButtonCancel;
-            this.ClientSize = new System.Drawing.Size(1209, 810);
+            this.ClientSize = new System.Drawing.Size(1060, 763);
             this.ControlBox = false;
             this.Controls.Add(this.SplitContainer1);
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.MinimumSize = new System.Drawing.Size(1227, 828);
+            this.MinimumSize = new System.Drawing.Size(1076, 779);
             this.Name = "ParamsForm";
             this.ShowInTaskbar = false;
             this.Text = "Parameters";
