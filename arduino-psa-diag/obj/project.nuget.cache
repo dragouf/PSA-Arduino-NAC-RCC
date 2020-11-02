@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "dgSpecHash": "nY+DbuZ7PACENSOCWJPNaR9qIoqTpFWrHZ9QGBLRdHcpVucR5XmVoVkusQAt0yovwdZPVebigA2cEyG2uVx6Aw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\david\\source\\repos\\arduino-psa-diag\\arduino-psa-diag\\arduino-psa-diag.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\david\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\microsoft.win32.registry\\4.7.0\\microsoft.win32.registry.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\runtime.linux-arm.runtime.native.system.io.ports\\4.7.0\\runtime.linux-arm.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\runtime.linux-arm64.runtime.native.system.io.ports\\4.7.0\\runtime.linux-arm64.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\runtime.linux-x64.runtime.native.system.io.ports\\4.7.0\\runtime.linux-x64.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\runtime.native.system.io.ports\\4.7.0\\runtime.native.system.io.ports.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\runtime.osx-x64.runtime.native.system.io.ports\\4.7.0\\runtime.osx-x64.runtime.native.system.io.ports.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.io.ports\\4.7.0\\system.io.ports.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.security.accesscontrol\\4.7.0\\system.security.accesscontrol.4.7.0.nupkg.sha512",
+    "C:\\Users\\david\\.nuget\\packages\\system.security.principal.windows\\4.7.0\\system.security.principal.windows.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

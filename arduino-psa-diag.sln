@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30611.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "arduino-psa-diag", "arduino-psa-diag\arduino-psa-diag.csproj", "{DCD11E3C-C84B-4286-B7FD-C5FAF78CEE54}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DCD11E3C-C84B-4286-B7FD-C5FAF78CEE54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCD11E3C-C84B-4286-B7FD-C5FAF78CEE54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCD11E3C-C84B-4286-B7FD-C5FAF78CEE54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCD11E3C-C84B-4286-B7FD-C5FAF78CEE54}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B01FEBC7-8C33-4052-9FD9-0BA9006CC4DD}
+	EndGlobalSection
+EndGlobal
