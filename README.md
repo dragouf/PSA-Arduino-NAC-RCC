@@ -4,7 +4,7 @@ PSA NAC / RCC Diagbox Configuration software
 
 fork of https://github.com/ludwig-v/arduino-psa-nac_rcc_cirocco 
 
-Thanks to Vlud and Bagou91. 
+
 
 # What's in this version
 
@@ -14,3 +14,8 @@ Thanks to Vlud and Bagou91.
 
 
 You have the source code as well if you want to improve it and better understand how it is working.
+
+Tuto in french: https://www.forum-peugeot.com/Forum/threads/tuto-t%C3%A9l%C3%A9codage-et-calibration-dun-nac-rcc-cirocco-sans-diagbox-via-arduino.121767/
+
+
+Thanks to Vlud and Bagou91. 
