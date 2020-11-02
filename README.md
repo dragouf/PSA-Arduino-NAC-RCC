@@ -25,7 +25,7 @@ Thanks to Vlud and Bagou91.
 
 After some discussion with VLud he wants all the source of every files to be mention. So here is the list. The purpose of the repository is to unify their work.
 
-ecu.md > Source: https://github.com/ludwig-v/psa-seedkey-algorithm/blob/main/ECU_KEYS.md
-protocol.md > Source: https://github.com/ludwig-v/arduino-psa-diag/blob/master/README.md
-arduino-psa-diag.ino > Source: https://github.com/ludwig-v/arduino-psa-diag/blob/master/arduino-psa-diag/arduino-psa-diag.ino 
-arduino-psa-diag/SeedKeyGenerator.cs > Source: https://github.com/ludwig-v/psa-seedkey-algorithm/blob/main/algorithmSimplified.cs
+ecu.md > Source: https://github.com/ludwig-v/psa-seedkey-algorithm/blob/main/ECU_KEYS.md  
+protocol.md > Source: https://github.com/ludwig-v/arduino-psa-diag/blob/master/README.md  
+arduino-psa-diag.ino > Source: https://github.com/ludwig-v/arduino-psa-diag/blob/master/arduino-psa-diag/arduino-psa-diag.ino   
+arduino-psa-diag/SeedKeyGenerator.cs > Source: https://github.com/ludwig-v/psa-seedkey-algorithm/blob/main/algorithmSimplified.cs  
