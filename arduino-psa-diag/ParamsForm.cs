@@ -88,7 +88,7 @@ namespace arduino_psa_diag
                     if (zoneNacValue != "" && zoneNacValue != "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
                     {
                         for (int i = 0; i < zoneNacValue.Length; i += 2)
-                        {
+                        {                            
                             this.TextBoxVin.Text += Convert.ToChar(byte.Parse(zoneNacValue.Substring(i, 2), NumberStyles.HexNumber));
                         }
                         this.TextBoxVin.Tag = zoneNacValue;

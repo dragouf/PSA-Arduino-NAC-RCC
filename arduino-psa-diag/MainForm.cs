@@ -409,7 +409,8 @@ namespace arduino_psa_diag
 
             this.VersionLabel.Text = this.VersionLabel.Text + this.Version;
 
-            try
+            this.Log("Opening Application..." + Environment.NewLine);
+            /*try
             {
                 if (File.Exists(this.LogFilePath))
                 {
@@ -419,8 +420,8 @@ namespace arduino_psa_diag
             catch (IOException)
             {
                 MessageBox.Show(this, "Log file is not accessible (probably locked by another process)", "Error");
-                Application.Exit();
-            }
+                // Application.Exit();
+            }*/
 
             string[] portNames = SerialPort.GetPortNames();
 
@@ -498,7 +499,10 @@ namespace arduino_psa_diag
             {
                 this.SerialPortArduino.Close();
             }
-            Application.Exit();
+
+            this.Log("Closing Application..." + Environment.NewLine);
+
+            // Application.Exit();
         }
 
         private void OnButtonSerialClick(object sender, EventArgs args)
@@ -520,7 +524,7 @@ namespace arduino_psa_diag
                     if (this.SerialPortArduino.IsOpen)
                     {
                         this.ButtonSerial.Text = "Arduino Disconnect";
-                        this.TextBoxLog.Text += "COM Port opened successfully";
+                        this.Log("COM Port opened successfully" + Environment.NewLine);
                         this.ButtonNac.Enabled = true;
                         this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
                         Send("00");
@@ -549,7 +553,7 @@ namespace arduino_psa_diag
                 {
                     this.SerialPortArduino.Close();
                     this.ButtonSerial.Text = "Arduino Connect";
-                    this.TextBoxLog.Text += "COM port close";
+                    this.Log("COM port close" + Environment.NewLine);
                 }
             }
         }
@@ -728,10 +732,7 @@ namespace arduino_psa_diag
 
             if (rcvData == null)
             {
-                this.TextBoxLog.Invoke((MethodInvoker)delegate
-                {
-                    this.TextBoxLog.AppendText("Arduino Connection Failed");
-                });
+                this.Log("Arduino Connection Failed" + Environment.NewLine);
                 return;
             }
 
@@ -746,15 +747,7 @@ namespace arduino_psa_diag
             rcvData = rcvData.Trim();
 
             // Log received data
-            try
-            {
-                File.AppendAllText(this.LogFilePath, "< " + unprocessedData + "\n\n");
-            }
-            catch (IOException)
-            {
-                MessageBox.Show(this, "Log file is not accessible (probably locked by another process)", "Error");
-                Application.Exit();
-            }
+            this.Log("< " + unprocessedData + Environment.NewLine + Environment.NewLine);            
 
             checked
             {
@@ -990,18 +983,13 @@ namespace arduino_psa_diag
                 }
                 else
                 {
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText(rcvData + "\n");
-                    });
+                    this.Log(rcvData + Environment.NewLine);
 
                     ProcessResponse(unprocessedData);
 
                     unprocessedData = "";
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("-------------------------------------------------------------\n");
-                    });
+
+                    this.Log("-------------------------------------------------------------" + Environment.NewLine);
                 }
             }
         }
@@ -1012,10 +1000,7 @@ namespace arduino_psa_diag
             {
                 this.IsConfLocked = (this.IsCalUploading = (this.isNacUnlocked = (this.needUnlocking = false)));
 
-                Invoke((Action)delegate
-                {
-                    this.TextBoxLog.Text += "OPERATION CANCELED";
-                });
+                this.Log("OPERATION CANCELED" + Environment.NewLine);
 
                 return;
             }
@@ -1029,18 +1014,12 @@ namespace arduino_psa_diag
 
                     if (ecuKey != "")
                     {
-                        Invoke((Action)delegate
-                        {
-                            this.TextBoxLog.AppendText("Seed: " + ecuSeed + "\n");
-                        });
+                        this.Log("Seed: " + ecuSeed + Environment.NewLine);
 
                         // 2704XXXXXXXX	Unlocking response for configuration - XXXXXXXX = KEY - Must be given within 5 seconds after seed generation
                         Send("2704" + ecuKey);
 
-                        Invoke((Action)delegate
-                        {
-                            this.TextBoxLog.AppendText("Key: " + ecuKey + "\n");
-                        });
+                        this.Log("Key: " + ecuKey + Environment.NewLine);
                     }
                     else
                     {
@@ -1048,7 +1027,7 @@ namespace arduino_psa_diag
                         {
                             this.LabelNac.Text = "";
                             this.LabelStatus.Text = "NAC/RCC Unlocking failed !";
-                            this.TextBoxLog.AppendText("Tracability OK");
+                            this.Log("Tracability OK" + Environment.NewLine);
                         });
                         return;
                     }
@@ -1060,18 +1039,12 @@ namespace arduino_psa_diag
 
                     if (ecuKey != "")
                     {
-                        Invoke((Action)delegate
-                        {
-                            this.TextBoxLog.AppendText("Seed: " + ecuKey + "\n");
-                        });
+                        this.Log("Seed: " + ecuSeed + Environment.NewLine);
 
                         // 2702XXXXXXXX	Unlocking response for download - XXXXXXXX = KEY - Must be given within 5 seconds after seed generation
                         Send("2702" + ecuKey);
 
-                        Invoke((Action)delegate
-                        {
-                            this.TextBoxLog.AppendText("Key: " + ecuKey + "\n");
-                        });
+                        this.Log("Key: " + ecuKey + Environment.NewLine);
                     }
                     else
                     {
@@ -1079,7 +1052,7 @@ namespace arduino_psa_diag
                         {
                             this.LabelNac.Text = "";
                             this.LabelStatus.Text = "NAC/RCC Unlocking failed !";
-                            this.TextBoxLog.AppendText("Tracability OK");
+                            this.Log("Tracability OK" + Environment.NewLine);
                         });
 
                         return;
@@ -1087,10 +1060,7 @@ namespace arduino_psa_diag
                 }
                 else if (rcvData.StartsWith("6E2901") || rcvData.StartsWith("7F2E24")) // 6EXXXX	Successfull Configuration Write of Zone XXXX // 7F2EXX	Failed Configuration Write
                 {
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Tracability OK\n");
-                    });
+                    this.Log("Tracability OK" + Environment.NewLine);
 
                     // 1103	Reboot
                     Send("1103");
@@ -1100,17 +1070,11 @@ namespace arduino_psa_diag
                 }
                 else if (rcvData.StartsWith("54")) // 54	Faults cleared
                 {
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Clearing faults OK\n");
-                    });
+                    this.Log("Clearing faults OK" + Environment.NewLine);
                 }
                 else if (rcvData.StartsWith("77") && this.IsZiErased) // 77	Flash autocontrol OK
                 {
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Flash autocontrol OK\n");
-                    });
+                    this.Log("Flash autocontrol OK" + Environment.NewLine);
 
                     // 1103	Reboot
                     Send("1103");
@@ -1124,7 +1088,7 @@ namespace arduino_psa_diag
                     {
                         this.LabelNac.Text = "";
                         this.LabelStatus.Text = "Flash autocontrol OK";
-                        this.TextBoxLog.AppendText("Flash autocontrol OK\n");
+                        this.Log("Flash autocontrol OK" + Environment.NewLine);
                     });
                     Thread.Sleep(100);
 
@@ -1133,10 +1097,7 @@ namespace arduino_psa_diag
                 }
                 else if (rcvData.StartsWith("7F2E78")) // 7F2E78	Configuration Write in progress
                 {
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Writing in progress\n");
-                    });
+                    this.Log("Writing in progress" + Environment.NewLine);
                 }
                 else if (rcvData.StartsWith("7F1012")) // 7FXXYY	Error - XX = Service / YY = Error Number
                 {
@@ -1144,10 +1105,7 @@ namespace arduino_psa_diag
 
                     Send(this.OpenDiagCode);
 
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Changing Diagnostic Session message\n");
-                    });
+                    this.Log("Changing Diagnostic Session message" + Environment.NewLine);
                 }
                 else if (rcvData.StartsWith("7F3422")) // 7FXXYY	Error - XX = Service / YY = Error Number
                 {
@@ -1170,15 +1128,12 @@ namespace arduino_psa_diag
                         this.SendProgressBar.PerformStep();
                         this.LabelNac.Text = this.SendProgressBar.Value * 10 + "/" + this.SendProgressBar.Maximum * 10;
                         this.LabelStatus.Text = "Flash autocontrol in progress... " + this.SendProgressBar.Value * 10 + "%";
-                        this.TextBoxLog.AppendText("Flash autocontrol in progress\n");
+                        this.Log("Flash autocontrol in progress" + Environment.NewLine);
                     });
                 }
                 else if (rcvData.StartsWith("5103")) // 5103	Reboot OK
                 {
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Reboot in progress\n");
-                    });
+                    this.Log("Reboot in progress\n" + Environment.NewLine);
                 }
                 else if (rcvData.StartsWith("7F2E7E") || rcvData.StartsWith("7F2E24")) // 7F2E7E	Failed Configuration Write - Unit is locked
                 {
@@ -1190,10 +1145,7 @@ namespace arduino_psa_diag
                 {
                     this.isNacUnlocked = true;
 
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("NAC/RCC Unlocked successfully\n");
-                    });
+                    this.Log("NAC/RCC Unlocked successfully" + Environment.NewLine);
 
                     this.CurrentZoneIndex = 0;
 
@@ -1210,7 +1162,7 @@ namespace arduino_psa_diag
                     {
                         Invoke((Action)delegate
                         {
-                            this.TextBoxLog.AppendText(this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString() + " : " + zonesJson[this.CurrentZoneKey]["name"].ToString() + ": Writing error");
+                            this.Log(this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString() + " : " + zonesJson[this.CurrentZoneKey]["name"].ToString() + ": Writing error" + Environment.NewLine);
                             this.SendProgressBar.Value = 0;
                             this.LabelStatus.Text = "Writing Error ! Invalid value on " + this.ZonesKeyDescriptionFlatList[this.CurrentZoneIndex].ToString();
                             this.ButtonReadNac.Enabled = false;
@@ -1229,10 +1181,7 @@ namespace arduino_psa_diag
                         return;
                     }
 
-                    Invoke((Action)delegate
-                    {
-                        this.TextBoxLog.AppendText("Zone " + zonesJson[this.CurrentZoneKey]["name"].ToString() + " written successfully\n");
-                    });
+                    this.Log("Zone " + zonesJson[this.CurrentZoneKey]["name"].ToString() + " written successfully" + Environment.NewLine);
 
                     Invoke((Action)delegate
                     {
@@ -1283,7 +1232,7 @@ namespace arduino_psa_diag
 
                     Invoke((Action)delegate
                     {
-                        this.TextBoxLog.AppendText("Error reading zone " + currentZoneKey + " IGNORING\n");
+                        this.Log("Error reading zone " + currentZoneKey + " IGNORING" + Environment.NewLine);
                         this.SendProgressBar.PerformStep();
                         this.LabelNac.Text = this.SendProgressBar.Value + "/" + this.SendProgressBar.Maximum;
                         YieldZoneReading();
@@ -1298,7 +1247,7 @@ namespace arduino_psa_diag
 
                     Invoke((Action)delegate
                     {
-                        this.TextBoxLog.AppendText("Zone Data: " + currentZoneValue + "\n");
+                        this.Log("Zone Data: " + currentZoneValue + Environment.NewLine);
                         this.SendProgressBar.PerformStep();
                         this.LabelNac.Text = this.SendProgressBar.Value + "/" + this.SendProgressBar.Maximum;
                     });
@@ -1345,11 +1294,11 @@ namespace arduino_psa_diag
                 this.IsNacReading = false;
                 this.CurrentZoneIndex = 0;
 
-                File.AppendAllText(this.LogFilePath, "------------------------------------------------------\n");
-
+                // write everything to log when ended
+                this.Log("------------------------------------------------------" + Environment.NewLine);                
                 foreach (DictionaryEntry item in this.NacZoneValueHash)
                 {
-                    File.AppendAllText(this.LogFilePath, string.Concat(item.Key, "=", item.Value, "\n"));
+                    this.Log(string.Concat(item.Key, "=", item.Value, Environment.NewLine));
                 }
             }
         }
@@ -1493,13 +1442,13 @@ namespace arduino_psa_diag
                 return;
             }
 
-            File.AppendAllText(this.LogFilePath, "\nModified values:\n");
-
+            // Write modified values to log
+            this.Log(Environment.NewLine + "Modified values:" + Environment.NewLine);
             foreach (DictionaryEntry item in this.NacZoneValueHash)
             {
                 if (this.NewZoneValueHash.ContainsKey(item.Key) && item.Value.ToString() != this.NewZoneValueHash[item.Key].ToString())
                 {
-                    File.AppendAllText(this.LogFilePath, item.Key.ToString() + " : " + item.Value.ToString() + " => " + this.NewZoneValueHash[item.Key].ToString() + "\n");
+                    this.Log(item.Key.ToString() + " : " + item.Value.ToString() + " => " + this.NewZoneValueHash[item.Key].ToString() + Environment.NewLine);
                 }
             }
             this.ZonesKeyDescriptionFlatList.Clear();
@@ -1645,15 +1594,8 @@ namespace arduino_psa_diag
         private void Send(string data)
         {
             this.SerialPortArduino.WriteLine(data);
-            try
-            {
-                File.AppendAllText(this.LogFilePath, "> " + data + "\n");
-            }
-            catch (IOException)
-            {
-                MessageBox.Show(this, "Log file is not accessible (probably locked by another process)", "Error");
-                Application.Exit();
-            }
+
+            this.Log("> " + data + Environment.NewLine);
         }
 
         private byte[] CalibrationByteCalc(string P_0)
@@ -1755,6 +1697,34 @@ namespace arduino_psa_diag
             }
         }
 
+        private void Log(string text, bool writeToFile = true)
+        {
+            if(writeToFile)
+            {
+                try
+                {
+                    File.AppendAllText(this.LogFilePath, text);
+                }
+                catch (IOException)
+                {
+                    MessageBox.Show(this, "Log file is not accessible (probably locked by another process)", "Error");
+                    // Application.Exit();
+                }
+            }
+
+            if(this.TextBoxLog.InvokeRequired)
+            {
+                this.TextBoxLog.Invoke((MethodInvoker)delegate
+                {
+                    this.TextBoxLog.AppendText(text);
+                });
+            } 
+            else
+            {
+                this.TextBoxLog.AppendText(text);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -1789,42 +1759,47 @@ namespace arduino_psa_diag
             // 
             // TextBoxSend
             // 
+            this.TextBoxSend.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.TextBoxSend.Enabled = false;
-            this.TextBoxSend.Location = new System.Drawing.Point(276, 373);
-            this.TextBoxSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TextBoxSend.Location = new System.Drawing.Point(13, 305);
+            this.TextBoxSend.Margin = new System.Windows.Forms.Padding(4);
             this.TextBoxSend.Name = "TextBoxSend";
-            this.TextBoxSend.Size = new System.Drawing.Size(421, 22);
+            this.TextBoxSend.Size = new System.Drawing.Size(594, 23);
             this.TextBoxSend.TabIndex = 0;
             // 
             // ButtonSend
             // 
-            this.ButtonSend.Location = new System.Drawing.Point(705, 367);
-            this.ButtonSend.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonSend.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonSend.Enabled = false;
+            this.ButtonSend.Location = new System.Drawing.Point(615, 305);
+            this.ButtonSend.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonSend.Name = "ButtonSend";
-            this.ButtonSend.Size = new System.Drawing.Size(100, 28);
+            this.ButtonSend.Size = new System.Drawing.Size(88, 26);
             this.ButtonSend.TabIndex = 1;
             this.ButtonSend.Text = "Send";
             this.ButtonSend.UseVisualStyleBackColor = true;
-            this.ButtonSend.Visible = false;
             this.ButtonSend.Click += new System.EventHandler(this.OnButtonSendClick);
             // 
             // TextBoxLog
             // 
-            this.TextBoxLog.Location = new System.Drawing.Point(365, 402);
-            this.TextBoxLog.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.TextBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TextBoxLog.Location = new System.Drawing.Point(13, 339);
+            this.TextBoxLog.Margin = new System.Windows.Forms.Padding(4);
             this.TextBoxLog.Multiline = true;
             this.TextBoxLog.Name = "TextBoxLog";
+            this.TextBoxLog.ReadOnly = true;
             this.TextBoxLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.TextBoxLog.Size = new System.Drawing.Size(775, 128);
+            this.TextBoxLog.Size = new System.Drawing.Size(690, 158);
             this.TextBoxLog.TabIndex = 2;
-            this.TextBoxLog.Visible = false;
             // 
             // ButtonSerial
             // 
-            this.ButtonSerial.Location = new System.Drawing.Point(164, 21);
-            this.ButtonSerial.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonSerial.Location = new System.Drawing.Point(144, 20);
+            this.ButtonSerial.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonSerial.Name = "ButtonSerial";
-            this.ButtonSerial.Size = new System.Drawing.Size(200, 28);
+            this.ButtonSerial.Size = new System.Drawing.Size(175, 26);
             this.ButtonSerial.TabIndex = 3;
             this.ButtonSerial.Text = "Arduino Connect";
             this.ButtonSerial.UseVisualStyleBackColor = true;
@@ -1833,10 +1808,10 @@ namespace arduino_psa_diag
             // ButtonNac
             // 
             this.ButtonNac.Enabled = false;
-            this.ButtonNac.Location = new System.Drawing.Point(19, 57);
-            this.ButtonNac.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonNac.Location = new System.Drawing.Point(17, 53);
+            this.ButtonNac.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonNac.Name = "ButtonNac";
-            this.ButtonNac.Size = new System.Drawing.Size(200, 28);
+            this.ButtonNac.Size = new System.Drawing.Size(175, 26);
             this.ButtonNac.TabIndex = 4;
             this.ButtonNac.Text = "NAC/RCC Access";
             this.ButtonNac.UseVisualStyleBackColor = true;
@@ -1845,10 +1820,10 @@ namespace arduino_psa_diag
             // ButtonReadNac
             // 
             this.ButtonReadNac.Enabled = false;
-            this.ButtonReadNac.Location = new System.Drawing.Point(19, 127);
-            this.ButtonReadNac.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonReadNac.Location = new System.Drawing.Point(17, 119);
+            this.ButtonReadNac.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonReadNac.Name = "ButtonReadNac";
-            this.ButtonReadNac.Size = new System.Drawing.Size(200, 28);
+            this.ButtonReadNac.Size = new System.Drawing.Size(175, 26);
             this.ButtonReadNac.TabIndex = 5;
             this.ButtonReadNac.Text = "Read Parameters";
             this.ButtonReadNac.UseVisualStyleBackColor = true;
@@ -1856,38 +1831,38 @@ namespace arduino_psa_diag
             // 
             // LabelStatus
             // 
-            this.LabelStatus.Location = new System.Drawing.Point(19, 218);
+            this.LabelStatus.Location = new System.Drawing.Point(17, 204);
             this.LabelStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelStatus.Name = "LabelStatus";
-            this.LabelStatus.Size = new System.Drawing.Size(488, 28);
+            this.LabelStatus.Size = new System.Drawing.Size(427, 26);
             this.LabelStatus.TabIndex = 6;
             // 
             // SendProgressBar
             // 
-            this.SendProgressBar.Location = new System.Drawing.Point(19, 250);
-            this.SendProgressBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.SendProgressBar.Location = new System.Drawing.Point(17, 234);
+            this.SendProgressBar.Margin = new System.Windows.Forms.Padding(4);
             this.SendProgressBar.Name = "SendProgressBar";
-            this.SendProgressBar.Size = new System.Drawing.Size(669, 28);
+            this.SendProgressBar.Size = new System.Drawing.Size(585, 26);
             this.SendProgressBar.Step = 1;
             this.SendProgressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.SendProgressBar.TabIndex = 7;
             // 
             // LabelNac
             // 
-            this.LabelNac.Location = new System.Drawing.Point(693, 250);
+            this.LabelNac.Location = new System.Drawing.Point(606, 234);
             this.LabelNac.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.LabelNac.Name = "LabelNac";
-            this.LabelNac.Size = new System.Drawing.Size(107, 28);
+            this.LabelNac.Size = new System.Drawing.Size(94, 26);
             this.LabelNac.TabIndex = 8;
             this.LabelNac.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ButtonParams
             // 
             this.ButtonParams.Enabled = false;
-            this.ButtonParams.Location = new System.Drawing.Point(599, 21);
-            this.ButtonParams.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonParams.Location = new System.Drawing.Point(524, 20);
+            this.ButtonParams.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonParams.Name = "ButtonParams";
-            this.ButtonParams.Size = new System.Drawing.Size(200, 28);
+            this.ButtonParams.Size = new System.Drawing.Size(175, 26);
             this.ButtonParams.TabIndex = 9;
             this.ButtonParams.Text = "Parameters";
             this.ButtonParams.UseVisualStyleBackColor = true;
@@ -1895,10 +1870,10 @@ namespace arduino_psa_diag
             // 
             // ButtonOfflineEditor
             // 
-            this.ButtonOfflineEditor.Location = new System.Drawing.Point(599, 185);
-            this.ButtonOfflineEditor.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ButtonOfflineEditor.Location = new System.Drawing.Point(524, 173);
+            this.ButtonOfflineEditor.Margin = new System.Windows.Forms.Padding(4);
             this.ButtonOfflineEditor.Name = "ButtonOfflineEditor";
-            this.ButtonOfflineEditor.Size = new System.Drawing.Size(200, 28);
+            this.ButtonOfflineEditor.Size = new System.Drawing.Size(175, 26);
             this.ButtonOfflineEditor.TabIndex = 14;
             this.ButtonOfflineEditor.Text = "Backup file Editor";
             this.ButtonOfflineEditor.UseVisualStyleBackColor = true;
@@ -1907,10 +1882,10 @@ namespace arduino_psa_diag
             // ButtonCancel
             // 
             this.ButtonCancel.Enabled = false;
-            this.ButtonCancel.Location = new System.Drawing.Point(599, 57);
+            this.ButtonCancel.Location = new System.Drawing.Point(524, 53);
             this.ButtonCancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ButtonCancel.Name = "ButtonCancel";
-            this.ButtonCancel.Size = new System.Drawing.Size(200, 28);
+            this.ButtonCancel.Size = new System.Drawing.Size(175, 26);
             this.ButtonCancel.TabIndex = 10;
             this.ButtonCancel.Text = "Cancel";
             this.ButtonCancel.UseVisualStyleBackColor = true;
@@ -1919,10 +1894,10 @@ namespace arduino_psa_diag
             // ButtonCalibration
             // 
             this.ButtonCalibration.Enabled = false;
-            this.ButtonCalibration.Location = new System.Drawing.Point(19, 92);
+            this.ButtonCalibration.Location = new System.Drawing.Point(17, 86);
             this.ButtonCalibration.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ButtonCalibration.Name = "ButtonCalibration";
-            this.ButtonCalibration.Size = new System.Drawing.Size(200, 28);
+            this.ButtonCalibration.Size = new System.Drawing.Size(175, 26);
             this.ButtonCalibration.TabIndex = 11;
             this.ButtonCalibration.Text = "Calibration Upload";
             this.ButtonCalibration.UseVisualStyleBackColor = true;
@@ -1930,9 +1905,9 @@ namespace arduino_psa_diag
             // 
             // LabelCalibrationFileName
             // 
-            this.LabelCalibrationFileName.Location = new System.Drawing.Point(237, 97);
+            this.LabelCalibrationFileName.Location = new System.Drawing.Point(207, 91);
             this.LabelCalibrationFileName.Name = "LabelCalibrationFileName";
-            this.LabelCalibrationFileName.Size = new System.Drawing.Size(292, 23);
+            this.LabelCalibrationFileName.Size = new System.Drawing.Size(256, 22);
             this.LabelCalibrationFileName.TabIndex = 12;
             // 
             // ComboBoxCom
@@ -1940,19 +1915,19 @@ namespace arduino_psa_diag
             this.ComboBoxCom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ComboBoxCom.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.ComboBoxCom.FormattingEnabled = true;
-            this.ComboBoxCom.Location = new System.Drawing.Point(19, 21);
-            this.ComboBoxCom.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.ComboBoxCom.Location = new System.Drawing.Point(17, 20);
+            this.ComboBoxCom.Margin = new System.Windows.Forms.Padding(4);
             this.ComboBoxCom.Name = "ComboBoxCom";
-            this.ComboBoxCom.Size = new System.Drawing.Size(136, 24);
+            this.ComboBoxCom.Size = new System.Drawing.Size(120, 23);
             this.ComboBoxCom.TabIndex = 13;
             // 
             // ButtonBackup
             // 
             this.ButtonBackup.Enabled = false;
-            this.ButtonBackup.Location = new System.Drawing.Point(599, 92);
+            this.ButtonBackup.Location = new System.Drawing.Point(524, 86);
             this.ButtonBackup.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ButtonBackup.Name = "ButtonBackup";
-            this.ButtonBackup.Size = new System.Drawing.Size(200, 28);
+            this.ButtonBackup.Size = new System.Drawing.Size(175, 26);
             this.ButtonBackup.TabIndex = 14;
             this.ButtonBackup.Text = "Backup Parameters";
             this.ButtonBackup.UseVisualStyleBackColor = true;
@@ -1961,10 +1936,10 @@ namespace arduino_psa_diag
             // ButtonRestore
             // 
             this.ButtonRestore.Enabled = false;
-            this.ButtonRestore.Location = new System.Drawing.Point(599, 126);
+            this.ButtonRestore.Location = new System.Drawing.Point(524, 118);
             this.ButtonRestore.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.ButtonRestore.Name = "ButtonRestore";
-            this.ButtonRestore.Size = new System.Drawing.Size(200, 28);
+            this.ButtonRestore.Size = new System.Drawing.Size(175, 26);
             this.ButtonRestore.TabIndex = 15;
             this.ButtonRestore.Text = "Restore Parameters";
             this.ButtonRestore.UseVisualStyleBackColor = true;
@@ -1972,26 +1947,26 @@ namespace arduino_psa_diag
             // 
             // LabelCalibrationId
             // 
-            this.LabelCalibrationId.Location = new System.Drawing.Point(237, 130);
+            this.LabelCalibrationId.Location = new System.Drawing.Point(207, 122);
             this.LabelCalibrationId.Name = "LabelCalibrationId";
-            this.LabelCalibrationId.Size = new System.Drawing.Size(292, 23);
+            this.LabelCalibrationId.Size = new System.Drawing.Size(256, 22);
             this.LabelCalibrationId.TabIndex = 16;
             this.LabelCalibrationId.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // VersionLabel
             // 
-            this.VersionLabel.Location = new System.Drawing.Point(19, 298);
+            this.VersionLabel.Location = new System.Drawing.Point(17, 279);
             this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(260, 23);
+            this.VersionLabel.Size = new System.Drawing.Size(228, 22);
             this.VersionLabel.TabIndex = 18;
             this.VersionLabel.Text = "Version: ";
             this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(816, 330);
+            this.ClientSize = new System.Drawing.Size(716, 510);
             this.Controls.Add(this.ButtonCalibration);
             this.Controls.Add(this.SendProgressBar);
             this.Controls.Add(this.ButtonReadNac);
@@ -2011,11 +1986,11 @@ namespace arduino_psa_diag
             this.Controls.Add(this.LabelStatus);
             this.Controls.Add(this.LabelCalibrationFileName);
             this.Controls.Add(this.ButtonSend);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(834, 377);
             this.Name = "MainForm";
             this.Text = "PSA-Arduino-NAC/RCC";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 
