@@ -1173,7 +1173,7 @@ namespace arduino_psa_diag
                             this.ButtonBackup.Enabled = false;
                             this.ButtonRestore.Enabled = false;
                             this.SendProgressBar.Value = 0;
-                            this.SendProgressBar.Maximum = 60;
+                            this.SendProgressBar.Maximum = 30;
                             this.LabelNac.Text = (this.LabelCalibrationId.Text = "");
                         });
                         this.CurrentZoneIndex = 0;
@@ -1305,6 +1305,8 @@ namespace arduino_psa_diag
 
         private void NacRebootCheck()
         {
+            int waitTime = 30;
+
             Invoke((Action)delegate
             {
                 this.LabelStatus.Text = "NAC/RCC rebooting...";
@@ -1316,18 +1318,18 @@ namespace arduino_psa_diag
                 this.ButtonBackup.Enabled = false;
                 this.ButtonRestore.Enabled = false;
                 this.SendProgressBar.Value = 0;
-                this.SendProgressBar.Maximum = 60;
+                this.SendProgressBar.Maximum = waitTime;
                 string text3 = (this.LabelNac.Text = (this.LabelCalibrationId.Text = ""));
             });
 
             checked
             {
-                int i;
-                for (i = 60; i >= 0; i--)
+                int seconds;
+                for (seconds = waitTime; seconds >= 0; seconds--)
                 {
                     Invoke((Action)delegate
                     {
-                        this.LabelStatus.Text = "NAC/RCC rebooting....  " + i + "s";
+                        this.LabelStatus.Text = "NAC/RCC rebooting....  " + seconds + "s";
                         this.SendProgressBar.PerformStep();
                     });
                     Thread.Sleep(1000);
@@ -1707,7 +1709,8 @@ namespace arduino_psa_diag
                 }
                 catch (IOException)
                 {
-                    MessageBox.Show(this, "Log file is not accessible (probably locked by another process)", "Error");
+                    this.Log("Log file is not accessible (probably locked by another process)", false);
+                    // MessageBox.Show(this, "Log file is not accessible (probably locked by another process)", "Error");
                     // Application.Exit();
                 }
             }
