@@ -12,8 +12,9 @@ fork of https://github.com/ludwig-v/arduino-psa-nac_rcc_cirocco
 - You have an offline editor (to edit configuration at home before to send it to the car)
 - Zone description instead of system name on main board (french only)
 - .Net core 
-- Unobfuscated, so if you find any error, please share
-
+- Unobfuscated, so if you find any error, please don't hesitate to read the code and do a PR
+- log are display inside the application directly
+- Do not crash when log file is locked
 
 You have the source code as well if you want to improve it and better understand how it is working.
 
