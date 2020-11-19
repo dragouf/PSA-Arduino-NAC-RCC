@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>arduino_psa_diag</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
+    <UserSecretsId>90a9ead0-2c85-402a-9639-bef1e586361f</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
