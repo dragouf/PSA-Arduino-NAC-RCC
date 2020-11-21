@@ -18,6 +18,10 @@ namespace arduino_psa_diag
 
         private Hashtable NacZoneValueHash;
 
+        private JObject JsonObject;
+
+        private bool OfflineEdit = false;
+
         private string LanguageCode = "fr";
 
         private IContainer components = null;
@@ -45,12 +49,17 @@ namespace arduino_psa_diag
         private Label LabelZoneSummary1;
 
         private TabPage TabPage1;
+
+        private Label labelLanguage;
+
+        private ComboBox comboBoxLanguage;
+
         private TabControl TabControl1;
 
-        public static void ReloadBuffer(Control P_0)
+        public static void SetDoubleBuffered(Control control)
         {
             PropertyInfo property = typeof(Control).GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
-            property.SetValue(P_0, true, null);
+            property.SetValue(control, true, null);
         }
 
         public Hashtable UserKeyValueHash()
@@ -58,12 +67,31 @@ namespace arduino_psa_diag
             return this._UserZoneValueHash;
         }
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
         public ParamsForm()
         {
             InitializeComponent();
+
+            SetDoubleBuffered(TabControl1);
+
             if (!CultureInfo.InstalledUICulture.NativeName.Contains("fran"))
             {
                 this.LanguageCode = "en";
+                this.comboBoxLanguage.SelectedIndex = 1;
+            }
+            else
+            {
+                this.LanguageCode = "fr";
+                this.comboBoxLanguage.SelectedIndex = 0;
             }
         }
 
@@ -71,24 +99,86 @@ namespace arduino_psa_diag
         {
         }
 
-        public void InitForm(ref Hashtable nacZoneValueHash, ref JObject jsonObject)
+        private void comboBoxLanguage_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.NacZoneValueHash == null || this.JsonObject == null)
+            {
+                return;
+            }
+
+            if (this.comboBoxLanguage.SelectedIndex == 0)
+            {
+                this.LanguageCode = "fr";
+
+                this.TextBoxVin.Text = string.Empty;
+                this.TextBoxSN.Text = string.Empty;
+                this.TextBoxBtName.Text = string.Empty;
+                this.LabelZoneSummary1.Text = string.Empty;
+                this.LabelZoneSummary2.Text = string.Empty;
+
+                this.TabControl1.SuspendLayout();
+
+                foreach (TabPage tabPage in this.TabControl1.TabPages)
+                {
+                    if (tabPage.Name != "TabPage1")
+                    {
+                        this.TabControl1.TabPages.Remove(tabPage);
+                    }
+                }
+
+                this.InitForm(this.NacZoneValueHash, this.JsonObject, this.OfflineEdit);
+
+                this.TabControl1.ResumeLayout();
+            }
+            else
+            {
+                this.LanguageCode = "en";
+
+                this.TextBoxVin.Text = string.Empty;
+                this.TextBoxSN.Text = string.Empty;
+                this.TextBoxBtName.Text = string.Empty;
+                this.LabelZoneSummary1.Text = string.Empty;
+                this.LabelZoneSummary2.Text = string.Empty;
+
+                this.TabControl1.SuspendLayout();
+
+                foreach (TabPage tabPage in this.TabControl1.TabPages)
+                {
+                    if (tabPage.Name != "TabPage1")
+                    {
+                        this.TabControl1.TabPages.Remove(tabPage);
+                    }
+                }
+
+                this.InitForm(this.NacZoneValueHash, this.JsonObject, this.OfflineEdit);
+
+                this.TabControl1.ResumeLayout();
+            }
+        }
+
+        public void InitForm(Hashtable nacZoneValueHash, JObject jsonObject, bool offlineEdit = false)
         {
             this.NacZoneValueHash = nacZoneValueHash;
+            this.JsonObject = jsonObject;
+            this.OfflineEdit = offlineEdit;
 
             checked
             {
                 // F190	VIN
                 // F18C	Serial number
                 // 0106	Calibration_Fct_BT
-                if (nacZoneValueHash.ContainsKey("F190") && nacZoneValueHash.ContainsKey("F18C") && nacZoneValueHash.ContainsKey("0106"))
+
+                string zoneNacValue = string.Empty;
+
+                if (nacZoneValueHash.ContainsKey("F190"))
                 {
                     // VIN
-                    string zoneNacValue = nacZoneValueHash["F190"].ToString();
+                    zoneNacValue = nacZoneValueHash["F190"].ToString();
 
                     if (zoneNacValue != "" && zoneNacValue != "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
                     {
                         for (int i = 0; i < zoneNacValue.Length; i += 2)
-                        {                            
+                        {
                             this.TextBoxVin.Text += Convert.ToChar(byte.Parse(zoneNacValue.Substring(i, 2), NumberStyles.HexNumber));
                         }
                         this.TextBoxVin.Tag = zoneNacValue;
@@ -98,7 +188,21 @@ namespace arduino_psa_diag
                         this.TextBoxVin.Text = "?????????????????";
                         this.TextBoxVin.Tag = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
                     }
+                }
+                else
+                {
+                    if(!offlineEdit)
+                    {
+                        MessageBox.Show("VIN (F190) is missing from configuration. Please make a new reading - Disconnect PSA Diag interface if plugged");
+                    } 
+                    else
+                    {
+                        MessageBox.Show("VIN (F190) is missing from configuration.");
+                    }                    
+                }
 
+                if (nacZoneValueHash.ContainsKey("0106"))
+                {
                     // Bluetooth
                     Label label = this.LabelBtName;
                     bool visible = (this.TextBoxBtName.Visible = true);
@@ -110,7 +214,21 @@ namespace arduino_psa_diag
                     {
                         this.TextBoxBtName.Text += Convert.ToChar(byte.Parse(zoneNacValue.Substring(i, 2), NumberStyles.HexNumber));
                     }
+                }
+                else
+                {
+                    if (!offlineEdit)
+                    {
+                        MessageBox.Show("Bluetooth name (0106) is missing from configuration. Please make a new reading - Disconnect PSA Diag interface if plugged");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Bluetooth name (0106) is missing from configuration.");
+                    }
+                }
 
+                if (nacZoneValueHash.ContainsKey("F18C"))
+                {
                     // SN
                     zoneNacValue = nacZoneValueHash["F18C"].ToString();
                     if (zoneNacValue != null)
@@ -125,335 +243,342 @@ namespace arduino_psa_diag
                     {
                         this.TextBoxSN.Tag = "";
                     }
-
-                    int labelXPosStart = 16;
-                    int labelYPosStart = 21;
-
-                    Regex regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
-                    int paramIndex = 0;
-
-                    List<string> zonesLabels = new List<string>();
-
-                    foreach (JProperty jsonZone in jsonObject.Root["NAC"]["zones"].Children())
-                    {
-                        string zoneNodeCode = jsonZone.Name;
-                        if (jsonZone.Name.Contains("0106") || jsonZone.Name.Contains("F190") || jsonZone.Name.Contains("F18C") || !this.NacZoneValueHash.ContainsKey(zoneNodeCode))
-                        {
-                            continue;
-                        }
-
-                        var zoneName = jsonZone.Value["name"]?.ToString();
-                        var zoneDescription = jsonZone.Value["description"][this.LanguageCode]?.ToString() ?? "";
-                        var zoneAcronym = jsonZone.Value["acronyms"]?.ToString();
-
-                        var zoneLabel = $"{zoneNodeCode}: {zoneDescription} [{zoneAcronym}]\n";
-
-                        zonesLabels.Add(zoneLabel);
-
-                        TabPage tabPage = new TabPage(zoneNodeCode)
-                        {
-                            AutoScroll = true,
-                            BackColor = SystemColors.Control,
-                            Padding = new Padding(3),
-                            TabIndex = 0,
-                            Name = jsonZone.Name,
-                            ToolTipText = string.IsNullOrEmpty(zoneDescription) ? zoneAcronym : zoneDescription
-                        };
-
-                        int currentYPos = labelYPosStart;
-                        paramIndex = 0;
-
-                        Label labelZoneCode = new Label
-                        {
-                            Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
-                            Name = jsonZone.Value["name"].ToString(),
-                            Text = zoneNodeCode + ": " + zoneName,
-                            Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0),
-                            Size = new Size(350, 25),
-                            TabIndex = 4
-                        };
-
-                        tabPage.Controls.Add(labelZoneCode);
-
-                        Label labelZoneDesc = new Label
-                        {
-                            Location = new Point(labelXPosStart + 350, currentYPos + paramIndex * 30),
-                            Name = jsonZone.Value["name"].ToString() + "_desc",
-                            Text = $"({zoneDescription})",
-                            Font = new Font("Microsoft Sans Serif", 9f, FontStyle.Italic, GraphicsUnit.Point, 0),
-                            Size = new Size(450, 25)
-                        };
-
-                        tabPage.Controls.Add(labelZoneDesc);
-
-                        currentYPos += 30;
-
-                        foreach (JObject zoneParams in jsonZone.Value["params"].Children())
-                        {
-                            Label labelExtraName = new Label
-                            {
-                                Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
-                                Name = zoneParams["extra_name"].ToString(),
-                                Text = zoneParams["name"].ToString() + ": " + zoneParams["extra_name"].ToString(),
-                                Size = new Size(310, 32),
-                                TabIndex = 4
-                            };
-
-                            if (((JObject)zoneParams["detail"])[this.LanguageCode].ToString() != "")
-                            {
-                                labelExtraName.Text = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString();
-                            }
-
-                            tabPage.Controls.Add(labelExtraName);
-
-                            int zoneNacDataValue = 0;
-                            // listbox param
-                            if (zoneParams["listbox"] != null)
-                            {
-                                ComboBox comboBox = new ComboBox
-                                {
-                                    BackColor = Color.White,
-                                    DropDownStyle = ComboBoxStyle.DropDownList,
-                                    FormattingEnabled = true,
-                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30 - 5),
-                                    Name = "comboBox1",
-                                    Size = new Size(400, 21),
-                                    TabIndex = 8
-                                };
-
-                                tabPage.Controls.Add(comboBox);
-
-                                if (nacZoneValueHash.ContainsKey(zoneNodeCode))
-                                {
-                                    zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
-                                    if (zoneNacValue != "")
-                                    {
-                                        int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
-
-                                        // 2108	Telecoding_Fct_BTEL
-                                        if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
-                                        {
-                                            paramPos--;
-                                        }
-
-                                        zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
-                                        byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
-                                        zoneNacDataValue &= paramMask;
-                                    }
-                                }
-
-                                foreach (JObject paramListJson in zoneParams["listbox"].Children())
-                                {
-                                    comboBox.Items.Add(((JObject)paramListJson["text"])[this.LanguageCode].ToString());
-                                    if (paramListJson["value"].ToString() == zoneNacDataValue.ToString("X2"))
-                                    {
-                                        comboBox.SelectedIndex = comboBox.Items.Count - 1;
-                                    }
-                                }
-
-                                JObject jsonParamsClone = (JObject)zoneParams.DeepClone();
-                                jsonParamsClone.Add(new JProperty("zone", zoneNodeCode));
-
-                                if (comboBox.SelectedIndex == -1)
-                                {
-                                    comboBox.Items.Add("Unknown 0x" + zoneNacDataValue.ToString("X2"));
-                                    comboBox.SelectedIndex = comboBox.Items.Count - 1;
-                                    jsonParamsClone.Add(new JProperty("unknown", zoneNacDataValue.ToString("X2")));
-                                }
-
-                                comboBox.Tag = jsonParamsClone;
-                            }
-                            // textbox
-                            else if (zoneParams["mask"].ToString() == "FF")
-                            {
-                                string zoneValueReadable = "??";
-                                string paramUnit = "";
-
-                                if (nacZoneValueHash.ContainsKey(zoneNodeCode))
-                                {
-                                    zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
-                                    if (zoneNacValue != "")
-                                    {
-                                        int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
-                                        int length = int.Parse(zoneParams["size"].ToString()) * 2;
-
-                                        if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
-                                        {
-                                            paramPos--;
-                                        }
-
-                                        zoneNacDataValue = int.Parse(zoneNacValue.Substring(paramPos * 2, length), NumberStyles.HexNumber);
-                                        zoneValueReadable = ((!(zoneParams["name"].ToString() == "DSZ")) ? Convert.ToInt32(zoneNacDataValue).ToString() : (3.0 + (double)(zoneNacDataValue - 86) * 0.5).ToString("#.#"));
-                                        if (zoneParams["unit"] != null)
-                                        {
-                                            paramUnit = zoneParams["unit"].ToString();
-                                        }
-                                    }
-                                }
-
-                                TextBox textboxParamValue = new TextBox
-                                {
-                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30),
-                                    Name = "valeur",
-                                    Text = zoneValueReadable,
-                                    Size = new Size(30, 23),
-                                    TabIndex = 4
-                                };
-
-                                JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
-                                zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
-
-                                textboxParamValue.Tag = zoneParamsClone;
-
-                                tabPage.Controls.Add(textboxParamValue);
-
-                                Label labelParamUnit = new Label
-                                {
-                                    Location = new Point(labelXPosStart + 355, currentYPos + paramIndex * 30),
-                                    Name = "unit",
-                                    Text = paramUnit,
-                                    Size = new Size(300, 23),
-                                    TabIndex = 4
-                                };
-
-                                tabPage.Controls.Add(labelParamUnit);
-                            }
-                            // textbox
-                            else if (zoneParams["maskBinary"].ToString().Contains("11"))
-                            {
-                                zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
-                                int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
-
-                                if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
-                                {
-                                    paramPos--;
-                                }
-
-                                zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
-                                byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
-                                zoneNacDataValue &= paramMask;
-                                paramPos = zoneParams["maskBinary"].ToString().LastIndexOf('1');
-                                paramPos = 8 - paramPos - 1;
-                                zoneNacDataValue = (byte)(zoneNacDataValue >> paramPos);
-
-                                TextBox textBox = new TextBox
-                                {
-                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30),
-                                    Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
-                                    Text = Convert.ToInt32(zoneNacDataValue).ToString(),
-                                    Size = new Size(30, 23),
-                                    TabIndex = 4
-                                };
-
-                                JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
-                                zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
-
-                                textBox.Tag = zoneParamsClone;
-                                tabPage.Controls.Add(textBox);
-                            }
-                            // checkbox
-                            else
-                            {
-                                zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
-                                int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
-
-                                if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
-                                {
-                                    paramPos--;
-                                }
-
-                                if (paramPos * 2 < zoneNacValue.Length)
-                                {
-                                    JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
-                                    zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
-
-                                    CheckBox checkBox = new CheckBox
-                                    {
-                                        Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30 - 5),
-                                        Name = zoneParams["name"].ToString(),
-                                        Tag = zoneParamsClone,
-                                        Text = "Disabled",
-                                        Size = new Size(95, 24),
-                                        TabIndex = 5,
-                                        UseVisualStyleBackColor = true,
-                                    };
-                                    checkBox.CheckedChanged += new System.EventHandler(OnCheckboxChanged);
-
-
-                                    tabPage.Controls.Add(checkBox);
-
-                                    if (nacZoneValueHash.ContainsKey(zoneNodeCode) && zoneNacValue != "")
-                                    {
-                                        zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
-                                        byte zoneMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
-                                        if ((zoneNacDataValue & zoneMask) == zoneMask)
-                                        {
-                                            checkBox.Checked = true;
-                                        }
-                                    }
-
-                                    Label labelParamDescription = new Label
-                                    {
-                                        Location = new Point(labelXPosStart + 410, currentYPos + paramIndex * 30),
-                                        Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
-                                        Text = "",
-                                        Size = new Size(400, 23),
-                                        TabIndex = 4
-                                    };
-
-                                    tabPage.Controls.Add(labelParamDescription);
-                                }
-                                // Unsupported by unit / not editable
-                                else
-                                {
-                                    Label labelParamDescription = new Label
-                                    {
-                                        Location = new Point(labelXPosStart + 410, currentYPos + paramIndex * 30),
-                                        Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
-                                        Text = "Unsupported by your unit",
-                                        Size = new Size(400, 23),
-                                        TabIndex = 4
-                                    };
-
-                                    tabPage.Controls.Add(labelParamDescription);
-                                }
-                            }
-
-                            Label labelZoneHexValue = new Label
-                            {
-                                Location = new Point(labelXPosStart + 815, currentYPos + paramIndex * 30),
-                                Name = "valhexa",
-                                Text = zoneNacDataValue.ToString("X2"),
-                                Size = new Size(50, 32),
-                                TabIndex = 4
-                            };
-
-                            tabPage.Controls.Add(labelZoneHexValue);
-                            paramIndex++;
-                        }
-                        this.TabControl1.TabPages.Add(tabPage);
-                    }
-
-                    // zone summary
-                    for (int index = 0; index < zonesLabels.Count; index++)
-                    {
-                        if (index < unchecked(zonesLabels.Count / 2))
-                        {
-                            LabelZoneSummary1.Text += zonesLabels[index].ToString();
-                        }
-                        else
-                        {
-                            LabelZoneSummary2.Text += zonesLabels[index].ToString();
-                        }
-                    }
                 }
                 else
                 {
-                    MessageBox.Show(this, "Missing zones, please make a new reading - Disconnect PSA Diag interface if plugged", "Error");
+                    if (!offlineEdit)
+                    {
+                        MessageBox.Show("NAC serial (F18C) is missing from configuration. Please make a new reading - Disconnect PSA Diag interface if plugged");
+                    }
+                    else
+                    {
+                        MessageBox.Show("NAC serial (F18C) is missing from configuration.");
+                    }
+                }
+
+                int labelXPosStart = 16;
+                int labelYPosStart = 21;
+
+                Regex regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
+                int paramIndex = 0;
+
+                List<string> zonesLabels = new List<string>();
+
+                foreach (JProperty jsonZone in jsonObject.Root["NAC"]["zones"].Children())
+                {
+                    string zoneNodeCode = jsonZone.Name;
+                    if (jsonZone.Name.Contains("0106") || jsonZone.Name.Contains("F190") || jsonZone.Name.Contains("F18C") || !this.NacZoneValueHash.ContainsKey(zoneNodeCode))
+                    {
+                        continue;
+                    }
+
+                    var zoneName = jsonZone.Value["name"]?.ToString();
+                    var zoneDescription = jsonZone.Value["description"][this.LanguageCode]?.ToString() ?? "";
+                    var zoneAcronym = jsonZone.Value["acronyms"]?.ToString();
+
+                    var zoneLabel = $"{zoneNodeCode}: {zoneDescription} [{zoneAcronym}]\n";
+
+                    zonesLabels.Add(zoneLabel);
+
+                    TabPage tabPage = new TabPage(zoneNodeCode)
+                    {
+                        AutoScroll = true,
+                        BackColor = SystemColors.Control,
+                        Padding = new Padding(3),
+                        TabIndex = 0,
+                        Name = jsonZone.Name,
+                        ToolTipText = string.IsNullOrEmpty(zoneDescription) ? zoneAcronym : zoneDescription
+                    };
+
+                    int currentYPos = labelYPosStart;
+                    paramIndex = 0;
+
+                    Label labelZoneCode = new Label
+                    {
+                        Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
+                        Name = jsonZone.Value["name"].ToString(),
+                        Text = zoneNodeCode + ": " + zoneName,
+                        Font = new Font("Microsoft Sans Serif", 10f, FontStyle.Bold, GraphicsUnit.Point, 0),
+                        Size = new Size(350, 25),
+                        TabIndex = 4
+                    };
+
+                    tabPage.Controls.Add(labelZoneCode);
+
+                    Label labelZoneDesc = new Label
+                    {
+                        Location = new Point(labelXPosStart + 350, currentYPos + paramIndex * 30),
+                        Name = jsonZone.Value["name"].ToString() + "_desc",
+                        Text = zoneDescription != "" ? $"({zoneDescription})" : "",
+                        Font = new Font("Microsoft Sans Serif", 9f, FontStyle.Italic, GraphicsUnit.Point, 0),
+                        Size = new Size(450, 25)
+                    };
+
+                    tabPage.Controls.Add(labelZoneDesc);
+
+                    currentYPos += 30;
+
+                    foreach (JObject zoneParams in jsonZone.Value["params"].Children())
+                    {
+                        Label labelExtraName = new Label
+                        {
+                            Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
+                            Name = zoneParams["extra_name"].ToString(),
+                            Text = zoneParams["name"].ToString() + ": " + zoneParams["extra_name"].ToString(),
+                            Size = new Size(310, 32),
+                            TabIndex = 4
+                        };
+
+                        if (((JObject)zoneParams["detail"])[this.LanguageCode].ToString() != "")
+                        {
+                            labelExtraName.Text = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString();
+                        }
+
+                        tabPage.Controls.Add(labelExtraName);
+
+                        int zoneNacDataValue = 0;
+                        // listbox param
+                        if (zoneParams["listbox"] != null)
+                        {
+                            ComboBox comboBox = new ComboBox
+                            {
+                                BackColor = Color.White,
+                                DropDownStyle = ComboBoxStyle.DropDownList,
+                                FormattingEnabled = true,
+                                Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30 - 5),
+                                Name = "comboBox1",
+                                Size = new Size(400, 21),
+                                TabIndex = 8
+                            };
+
+                            tabPage.Controls.Add(comboBox);
+
+                            if (nacZoneValueHash.ContainsKey(zoneNodeCode))
+                            {
+                                zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+                                if (zoneNacValue != "")
+                                {
+                                    int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+
+                                    // 2108	Telecoding_Fct_BTEL
+                                    if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                                    {
+                                        paramPos--;
+                                    }
+
+                                    zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+                                    byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
+                                    zoneNacDataValue &= paramMask;
+                                }
+                            }
+
+                            foreach (JObject paramListJson in zoneParams["listbox"].Children())
+                            {
+                                comboBox.Items.Add(((JObject)paramListJson["text"])[this.LanguageCode].ToString());
+                                if (paramListJson["value"].ToString() == zoneNacDataValue.ToString("X2"))
+                                {
+                                    comboBox.SelectedIndex = comboBox.Items.Count - 1;
+                                }
+                            }
+
+                            JObject jsonParamsClone = (JObject)zoneParams.DeepClone();
+                            jsonParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+                            if (comboBox.SelectedIndex == -1)
+                            {
+                                comboBox.Items.Add("Unknown 0x" + zoneNacDataValue.ToString("X2"));
+                                comboBox.SelectedIndex = comboBox.Items.Count - 1;
+                                jsonParamsClone.Add(new JProperty("unknown", zoneNacDataValue.ToString("X2")));
+                            }
+
+                            comboBox.Tag = jsonParamsClone;
+                        }
+                        // textbox
+                        else if (zoneParams["mask"].ToString() == "FF")
+                        {
+                            string zoneValueReadable = "??";
+                            string paramUnit = "";
+
+                            if (nacZoneValueHash.ContainsKey(zoneNodeCode))
+                            {
+                                zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+                                if (zoneNacValue != "")
+                                {
+                                    int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+                                    int length = int.Parse(zoneParams["size"].ToString()) * 2;
+
+                                    if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                                    {
+                                        paramPos--;
+                                    }
+
+                                    zoneNacDataValue = int.Parse(zoneNacValue.Substring(paramPos * 2, length), NumberStyles.HexNumber);
+                                    zoneValueReadable = ((!(zoneParams["name"].ToString() == "DSZ")) ? Convert.ToInt32(zoneNacDataValue).ToString() : (3.0 + (double)(zoneNacDataValue - 86) * 0.5).ToString("#.#"));
+                                    if (zoneParams["unit"] != null)
+                                    {
+                                        paramUnit = zoneParams["unit"].ToString();
+                                    }
+                                }
+                            }
+
+                            TextBox textboxParamValue = new TextBox
+                            {
+                                Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30),
+                                Name = "valeur",
+                                Text = zoneValueReadable,
+                                Size = new Size(30, 23),
+                                TabIndex = 4
+                            };
+
+                            JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
+                            zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+                            textboxParamValue.Tag = zoneParamsClone;
+
+                            tabPage.Controls.Add(textboxParamValue);
+
+                            Label labelParamUnit = new Label
+                            {
+                                Location = new Point(labelXPosStart + 355, currentYPos + paramIndex * 30),
+                                Name = "unit",
+                                Text = paramUnit,
+                                Size = new Size(300, 23),
+                                TabIndex = 4
+                            };
+
+                            tabPage.Controls.Add(labelParamUnit);
+                        }
+                        // textbox
+                        else if (zoneParams["maskBinary"].ToString().Contains("11"))
+                        {
+                            zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+                            int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+
+                            if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                            {
+                                paramPos--;
+                            }
+
+                            zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+                            byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
+                            zoneNacDataValue &= paramMask;
+                            paramPos = zoneParams["maskBinary"].ToString().LastIndexOf('1');
+                            paramPos = 8 - paramPos - 1;
+                            zoneNacDataValue = (byte)(zoneNacDataValue >> paramPos);
+
+                            TextBox textBox = new TextBox
+                            {
+                                Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30),
+                                Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
+                                Text = Convert.ToInt32(zoneNacDataValue).ToString(),
+                                Size = new Size(30, 23),
+                                TabIndex = 4
+                            };
+
+                            JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
+                            zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+                            textBox.Tag = zoneParamsClone;
+                            tabPage.Controls.Add(textBox);
+                        }
+                        // checkbox
+                        else
+                        {
+                            zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
+                            int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
+
+                            if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                            {
+                                paramPos--;
+                            }
+
+                            if (paramPos * 2 < zoneNacValue.Length)
+                            {
+                                JObject zoneParamsClone = (JObject)zoneParams.DeepClone();
+                                zoneParamsClone.Add(new JProperty("zone", zoneNodeCode));
+
+                                CheckBox checkBox = new CheckBox
+                                {
+                                    Location = new Point(labelXPosStart + 315, currentYPos + paramIndex * 30 - 5),
+                                    Name = zoneParams["name"].ToString(),
+                                    Tag = zoneParamsClone,
+                                    Text = "Disabled",
+                                    Size = new Size(95, 24),
+                                    TabIndex = 5,
+                                    UseVisualStyleBackColor = true,
+                                };
+                                checkBox.CheckedChanged += new System.EventHandler(OnCheckboxChanged);
+
+
+                                tabPage.Controls.Add(checkBox);
+
+                                if (nacZoneValueHash.ContainsKey(zoneNodeCode) && zoneNacValue != "")
+                                {
+                                    zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
+                                    byte zoneMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
+                                    if ((zoneNacDataValue & zoneMask) == zoneMask)
+                                    {
+                                        checkBox.Checked = true;
+                                    }
+                                }
+
+                                Label labelParamDescription = new Label
+                                {
+                                    Location = new Point(labelXPosStart + 410, currentYPos + paramIndex * 30),
+                                    Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
+                                    Text = "",
+                                    Size = new Size(400, 23),
+                                    TabIndex = 4
+                                };
+
+                                tabPage.Controls.Add(labelParamDescription);
+                            }
+                            // Unsupported by unit / not editable
+                            else
+                            {
+                                Label labelParamDescription = new Label
+                                {
+                                    Location = new Point(labelXPosStart + 410, currentYPos + paramIndex * 30),
+                                    Name = ((JObject)zoneParams["detail"])[this.LanguageCode].ToString(),
+                                    Text = "Unsupported by your unit",
+                                    Size = new Size(400, 23),
+                                    TabIndex = 4
+                                };
+
+                                tabPage.Controls.Add(labelParamDescription);
+                            }
+                        }
+
+                        Label labelZoneHexValue = new Label
+                        {
+                            Location = new Point(labelXPosStart + 815, currentYPos + paramIndex * 30),
+                            Name = "valhexa",
+                            Text = zoneNacDataValue.ToString("X2"),
+                            Size = new Size(50, 32),
+                            TabIndex = 4
+                        };
+
+                        tabPage.Controls.Add(labelZoneHexValue);
+                        paramIndex++;
+                    }
+                    this.TabControl1.TabPages.Add(tabPage);
+                }
+
+                // zone summary
+                for (int index = 0; index < zonesLabels.Count; index++)
+                {
+                    if (index < unchecked(zonesLabels.Count / 2))
+                    {
+                        LabelZoneSummary1.Text += zonesLabels[index].ToString();
+                    }
+                    else
+                    {
+                        LabelZoneSummary2.Text += zonesLabels[index].ToString();
+                    }
                 }
 
                 // Reload all buffers
-                foreach (Control control2 in this.SplitContainer1.Panel1.Controls)
+                /*foreach (Control control2 in this.SplitContainer1.Panel1.Controls)
                 {
                     ReloadBuffer(control2);
                 }
@@ -463,7 +588,7 @@ namespace arduino_psa_diag
                     ReloadBuffer(control3);
                 }
 
-                ReloadBuffer(this.SplitContainer1);
+                ReloadBuffer(this.SplitContainer1);*/
             }
         }
 
@@ -486,7 +611,9 @@ namespace arduino_psa_diag
             if (this.TextBoxVin.Text.Length != 17 || !regex.Match(this.TextBoxVin.Text).Success)
             {
                 MessageBox.Show(this, "VIN incorrect !", "Error");
-                return;
+
+                if(!this.OfflineEdit)
+                    return;
             }
 
             regex = new Regex("^[0-9A-Za-z\\-_]*$");
@@ -494,7 +621,9 @@ namespace arduino_psa_diag
             if (this.TextBoxBtName.Visible && (this.TextBoxBtName.Text.Length > 30 || this.TextBoxBtName.Text.Length == 0 || !regex.Match(this.TextBoxBtName.Text).Success))
             {
                 MessageBox.Show(this, "Bluetooth Name incorrect !", "Error");
-                return;
+
+                if (!this.OfflineEdit)
+                    return;
             }
 
             regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
@@ -505,6 +634,9 @@ namespace arduino_psa_diag
                 {
                     foreach (Control tabControl in tabPage.Controls)
                     {
+                        if (tabControl.Tag == null)
+                            continue;
+
                         if (!tabControl.GetType().ToString().Contains("TextBox") || tabControl.Tag.GetType().ToString().Contains("String"))
                         {
                             continue;
@@ -576,7 +708,7 @@ namespace arduino_psa_diag
 
                 clonedDefaultHashtable["F190"] = zoneValueHex.ToUpper();
 
-                if (this.TextBoxVin.Tag.ToString() != clonedDefaultHashtable["F190"].ToString())
+                if (this.TextBoxVin.Tag != null && this.TextBoxVin.Tag.ToString() != clonedDefaultHashtable["F190"].ToString())
                 {
                     paramsEditedList += "F190: VIN\r\n";
                 }
@@ -610,6 +742,9 @@ namespace arduino_psa_diag
                 {
                     foreach (Control tabControl in tabPage.Controls)
                     {
+                        if (tabControl.Tag == null)
+                            continue;
+
                         JObject jObject;
                         byte paramMask;
                         string zoneCode;
@@ -798,6 +933,8 @@ namespace arduino_psa_diag
             this.SplitContainer1 = new System.Windows.Forms.SplitContainer();
             this.TabControl1 = new System.Windows.Forms.TabControl();
             this.TabPage1 = new System.Windows.Forms.TabPage();
+            this.labelLanguage = new System.Windows.Forms.Label();
+            this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
             this.LabelZoneSummary2 = new System.Windows.Forms.Label();
             this.LabelZoneSummary1 = new System.Windows.Forms.Label();
             this.TextBoxBtName = new System.Windows.Forms.TextBox();
@@ -836,7 +973,7 @@ namespace arduino_psa_diag
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonSave);
             this.SplitContainer1.Panel2.Controls.Add(this.ButtonCancel);
             this.SplitContainer1.Size = new System.Drawing.Size(1060, 763);
-            this.SplitContainer1.SplitterDistance = 725;
+            this.SplitContainer1.SplitterDistance = 722;
             this.SplitContainer1.SplitterWidth = 5;
             this.SplitContainer1.TabIndex = 0;
             // 
@@ -850,13 +987,15 @@ namespace arduino_psa_diag
             this.TabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.TabControl1.SelectedIndex = 0;
             this.TabControl1.ShowToolTips = true;
-            this.TabControl1.Size = new System.Drawing.Size(1060, 725);
+            this.TabControl1.Size = new System.Drawing.Size(1060, 722);
             this.TabControl1.TabIndex = 13;
             // 
             // TabPage1
             // 
             this.TabPage1.AutoScroll = true;
             this.TabPage1.BackColor = System.Drawing.SystemColors.Control;
+            this.TabPage1.Controls.Add(this.labelLanguage);
+            this.TabPage1.Controls.Add(this.comboBoxLanguage);
             this.TabPage1.Controls.Add(this.LabelZoneSummary2);
             this.TabPage1.Controls.Add(this.LabelZoneSummary1);
             this.TabPage1.Controls.Add(this.TextBoxBtName);
@@ -868,14 +1007,36 @@ namespace arduino_psa_diag
             this.TabPage1.Location = new System.Drawing.Point(4, 24);
             this.TabPage1.Name = "TabPage1";
             this.TabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.TabPage1.Size = new System.Drawing.Size(1052, 697);
+            this.TabPage1.Size = new System.Drawing.Size(1052, 694);
             this.TabPage1.TabIndex = 0;
             this.TabPage1.Text = "Main";
+            // 
+            // labelLanguage
+            // 
+            this.labelLanguage.AutoSize = true;
+            this.labelLanguage.Location = new System.Drawing.Point(18, 78);
+            this.labelLanguage.Name = "labelLanguage";
+            this.labelLanguage.Size = new System.Drawing.Size(73, 15);
+            this.labelLanguage.TabIndex = 16;
+            this.labelLanguage.Text = "UI Language";
+            // 
+            // comboBoxLanguage
+            // 
+            this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxLanguage.FormattingEnabled = true;
+            this.comboBoxLanguage.Items.AddRange(new object[] {
+            "French",
+            "English"});
+            this.comboBoxLanguage.Location = new System.Drawing.Point(143, 71);
+            this.comboBoxLanguage.Name = "comboBoxLanguage";
+            this.comboBoxLanguage.Size = new System.Drawing.Size(182, 23);
+            this.comboBoxLanguage.TabIndex = 15;
+            this.comboBoxLanguage.SelectedIndexChanged += new System.EventHandler(this.comboBoxLanguage_SelectedIndexChanged);
             // 
             // LabelZoneSummary2
             // 
             this.LabelZoneSummary2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.LabelZoneSummary2.Location = new System.Drawing.Point(535, 83);
+            this.LabelZoneSummary2.Location = new System.Drawing.Point(535, 107);
             this.LabelZoneSummary2.Name = "LabelZoneSummary2";
             this.LabelZoneSummary2.Size = new System.Drawing.Size(503, 533);
             this.LabelZoneSummary2.TabIndex = 14;
@@ -883,7 +1044,7 @@ namespace arduino_psa_diag
             // LabelZoneSummary1
             // 
             this.LabelZoneSummary1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.LabelZoneSummary1.Location = new System.Drawing.Point(18, 83);
+            this.LabelZoneSummary1.Location = new System.Drawing.Point(18, 107);
             this.LabelZoneSummary1.Name = "LabelZoneSummary1";
             this.LabelZoneSummary1.Size = new System.Drawing.Size(503, 533);
             this.LabelZoneSummary1.TabIndex = 13;

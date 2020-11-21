@@ -1391,7 +1391,7 @@ namespace arduino_psa_diag
 
             // open params form
             var form = new ParamsForm();
-            form.InitForm(ref keyValueHash, ref this.JsonObject);
+            form.InitForm(keyValueHash, this.JsonObject, true);
             DialogResult dialogResult = form.ShowDialog(this);
 
             var newKeyValueHash = form.UserKeyValueHash();
@@ -1433,7 +1433,7 @@ namespace arduino_psa_diag
         {
             // open params form
             var form = new ParamsForm();
-            form.InitForm(ref this.NacZoneValueHash, ref this.JsonObject);
+            form.InitForm(this.NacZoneValueHash, this.JsonObject, false);
             DialogResult dialogResult = form.ShowDialog(this);
 
             // params form closed
