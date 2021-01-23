@@ -22,7 +22,7 @@ namespace arduino_psa_diag
     {
         private IContainer components = null;
 
-        private string Version = "1.1.5";
+        private string Version = "1.2.2";
 
         // private string AppPath = Application.StartupPath; 
 
