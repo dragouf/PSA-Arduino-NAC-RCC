@@ -83,7 +83,9 @@ namespace arduino_psa_diag
 
             SetDoubleBuffered(TabControl1);
 
-            if (!CultureInfo.InstalledUICulture.NativeName.Contains("fran"))
+            this.LanguageCode = CultureInfo.InstalledUICulture.TwoLetterISOLanguageName;
+
+            if (this.LanguageCode != "fr")
             {
                 this.LanguageCode = "en";
                 this.comboBoxLanguage.SelectedIndex = 1;
@@ -259,7 +261,7 @@ namespace arduino_psa_diag
                 int labelXPosStart = 16;
                 int labelYPosStart = 21;
 
-                Regex regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
+                Regex regex = new Regex("(BSZ|DZK|DZR|E5B|E88|EIO)");
                 int paramIndex = 0;
 
                 List<string> zonesLabels = new List<string>();
@@ -626,7 +628,7 @@ namespace arduino_psa_diag
                     return;
             }
 
-            regex = new Regex("(DZK|DZR|E5B|E88|EIO)");
+            regex = new Regex("(BSZ|DZK|DZR|E5B|E88|EIO)");
             checked
             {
                 // GET textboxes value
