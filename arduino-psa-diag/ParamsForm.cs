@@ -164,6 +164,8 @@ namespace arduino_psa_diag
             this.JsonObject = jsonObject;
             this.OfflineEdit = offlineEdit;
 
+            Hashtable hashtable = new Hashtable();
+
             checked
             {
                 // F190	VIN
@@ -322,6 +324,19 @@ namespace arduino_psa_diag
 
                     foreach (JObject zoneParams in jsonZone.Value["params"].Children())
                     {
+                        if (hashtable.ContainsKey(((object)zoneParams["name"]).ToString()))
+                        {
+                            continue;
+                        }
+                        if (zoneParams.ContainsKey("zoneLength") && int.Parse(((object)zoneParams["zoneLength"]).ToString()) > 0)
+                        {
+                            if (nacZoneValueHash[zoneNodeCode].ToString().Length != int.Parse(((object)zoneParams["zoneLength"]).ToString()) * 2)
+                            {
+                                continue;
+                            }
+                            hashtable.Add(((object)zoneParams["name"]).ToString(), 1);
+                        }
+
                         Label labelExtraName = new Label
                         {
                             Location = new Point(labelXPosStart, currentYPos + paramIndex * 30),
@@ -363,10 +378,10 @@ namespace arduino_psa_diag
                                     int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
 
                                     // 2108	Telecoding_Fct_BTEL
-                                    if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                                    /*if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
                                     {
                                         paramPos--;
-                                    }
+                                    }*/
 
                                     zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
                                     byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
@@ -409,10 +424,10 @@ namespace arduino_psa_diag
                                     int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
                                     int length = int.Parse(zoneParams["size"].ToString()) * 2;
 
-                                    if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                                    /*if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
                                     {
                                         paramPos--;
-                                    }
+                                    }*/
 
                                     zoneNacDataValue = int.Parse(zoneNacValue.Substring(paramPos * 2, length), NumberStyles.HexNumber);
                                     zoneValueReadable = ((!(zoneParams["name"].ToString() == "DSZ")) ? Convert.ToInt32(zoneNacDataValue).ToString() : (3.0 + (double)(zoneNacDataValue - 86) * 0.5).ToString("#.#"));
@@ -456,10 +471,10 @@ namespace arduino_psa_diag
                             zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
                             int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
 
-                            if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                            /*if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
                             {
                                 paramPos--;
-                            }
+                            }*/
 
                             zoneNacDataValue = byte.Parse(zoneNacValue.Substring(paramPos * 2, 2), NumberStyles.HexNumber);
                             byte paramMask = byte.Parse(zoneParams["mask"].ToString(), NumberStyles.HexNumber);
@@ -489,10 +504,10 @@ namespace arduino_psa_diag
                             zoneNacValue = nacZoneValueHash[zoneNodeCode].ToString();
                             int paramPos = int.Parse(zoneParams["pos"].ToString()) - 4;
 
-                            if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
+                            /*if (zoneNacValue.Length < 20 && zoneNodeCode == "2108" && regex.Match(zoneParams["name"].ToString()).Success)
                             {
                                 paramPos--;
-                            }
+                            }*/
 
                             if (paramPos * 2 < zoneNacValue.Length)
                             {
